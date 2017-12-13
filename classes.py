@@ -2,12 +2,8 @@ import pygame
 import random
 
 #colour variables
-black = (0, 0, 0)
+black = (0, 0, 0) 
 white = (255, 255, 255)
-green = (0, 255, 0)
-red = (255, 0, 0)
-blue = (0,0,255)
-yellow = (140, 0,140)
 
 #lists
 bullets = pygame.sprite.Group() #list that will hold all the bullets
@@ -20,8 +16,7 @@ upgrades = pygame.sprite.Group()
 floors = pygame.sprite.Group()
 letters = pygame.sprite.Group()
 keyboards = pygame.sprite.Group()
-blocks = pygame.sprite.Group()
-
+ladders = pygame.sprite.Group()
 
 
 #highscores
@@ -30,6 +25,10 @@ with open('highscores.txt', 'r') as r:
     for line in sorted(r):
         highscores.insert(0, line)
 
+highscores2 = []
+with open('highscores2.txt', 'r') as r:
+    for line in sorted(r):
+        highscores2.insert(0, line)
 
 #sprite lists
 ballanimation = [] #[size[type[variation[itteration]]]]
@@ -128,11 +127,10 @@ class parent(pygame.sprite.Sprite):
         everything.add(self)
 
 class Ball(parent):
-    def __init__(self,check, x, y, freeze): #PUSHERROR
+    def __init__(self,check,x,y, freeze):
         super().__init__()
         self.xcord = x
         self.ycord = y
-        self.freeze = freeze
         self.dia = 0 #diameter of the ball
         self.weight = 0 #size of the parabole bigger number smaller parabole
         self.check = check #checks ball type
@@ -176,7 +174,7 @@ class Ball(parent):
         
 
     def update(self):
-        if self.freeze == False: #PUSHERROR
+        if self.freeze == False:
             self.xcord += self.xspeed #handles ball horizontal movement
 
         self.timer += 1
@@ -194,9 +192,9 @@ class Ball(parent):
                 self.weight *= 10000
                 self.ittnum = -1
                 self.typenum = 0
-        if self.freeze == False:
-            self.yspeed -= self.weight #handles ball bouncing
-            self.ycord -= self.yspeed
+
+        self.yspeed -= self.weight #handles ball bouncing
+        self.ycord -= self.yspeed
 
         self.image = pygame.image.load(ballanimation[self.sizenum][self.typenum][0][self.ittnum])
         self.rect = self.image.get_rect()
@@ -212,17 +210,16 @@ class Wall(parent):
         self.rect = self.image.get_rect()
         self.rect.y = self.ycord
         self.rect.x = self.xcord
-        walls.add(self)
+        walls.add(self)       
 
 class Player(parent):
-    def __init__(self, x,y): #PUSHERROR
+    def __init__(self,x,y):
         super().__init__()
         self.reducer = 1
         self.reducerup = 1
-        self.xcord = x#640 #x coördinate
-        self.ycord = y#752 #y coördinate
+        self.xcord = 640 #x coördinate
+        self.ycord = 752 #y coördinate
         self.ammo = 10
-        self.lives = 3
         self.killcount = 0
         self.timer = 0
         self.ammotimer = 0
@@ -240,6 +237,7 @@ class Player(parent):
         self.immune1 = 0 #1 of 0 waarde als iets immune is
         players.add(self)
         self.deathtimer = 0
+        self.ladder = False
 
     def changespeed(self,x):
         self.xspeed += x
@@ -256,15 +254,13 @@ class Player(parent):
             if self.immunetimer > 120:
                 self.immune = False
                 self.immunetimer = 0
-            if self.lives <= 0:
-                self.alive = False
+
         else:
             self.immune1 = 0
                 
         if self.alive == False:
             self.xspeed = 0
             self.yspeed = 0
-            self.lives = 0
             self.once += 1 
  
 
@@ -311,7 +307,105 @@ class Player(parent):
         self.ittnumtimer += 1
         if self.deathtimer > 0:
             self.deathtimer += 1
+
+class Player2(parent):
+    def __init__(self,x,y):
+        super().__init__()
+        self.reducer = 1
+        self.reducerup = 1
+        self.xcord = 640 #x coördinate
+        self.ycord = 752 #y coördinate
+        self.ammo = 10
+        self.killcount = 0
+        self.timer = 0
+        self.ammotimer = 0
+        self.immune = True
+        self.immunetimer = 100
+        self.alive = True
+        self.once = 0 #this is there to make sure it only adds score once, remove this with menues and such
+        self.image = pygame.image.load(playeranimation[0][0][0])
+        self.rect = self.image.get_rect()
+        self.shooter = False # auto shooter
+        self.fire = False #kijkt of player schiet
+        self.firetimer = 0
+        self.ittnum = 0
+        self.ittnumtimer = 0
+        self.immune1 = 1 #1 of 0 waarde als iets immune is
+        players.add(self)
+        self.deathtimer = 0
+        self.ladder = False
+
+    def changespeed(self,x):
+        self.xspeed += x
+            
+
+    def reload(self):
+        self.ammo = 0
+        print("reloading")
+
+    def update(self):
+        if self.immune == True:
+            self.immunetimer += 1
+            self.immune1 = 1
+            if self.immunetimer > 120:
+                self.immune = False
+                self.immunetimer = 0
+
+        else:
+            self.immune1 = 0
+                
+        if self.alive == False:
+            self.xspeed = 0
+            self.yspeed = 0
+            self.once += 1 
+ 
+
+        if self.shooter == True and self.timer % 5 == 0:
+            bullet = Bullet(self.xcord, self.ycord)
+
+            
+        if self.alive == False:
+            self.image = pygame.image.load("Sprites/Extra/Death.png")
+        elif self.fire == True and self.xspeed == 0:
+            self.firetimer += 1
+            self.image = pygame.image.load(playeranimation[0][self.immune1][1])
+            if self.firetimer > 16:
+                self.firetimer = 0
+                self.fire = False
+        elif self.xspeed > 0:
+            self.fire = False
+            self.image = pygame.image.load(playeranimation[1][self.immune1][self.ittnum])
+            if self.ittnumtimer % 5 == 0:
+                self.ittnum += 1
+        elif self.xspeed < 0:
+            self.fire = False
+            self.image = pygame.image.load(playeranimation[2][self.immune1][self.ittnum])
+            if self.ittnumtimer % 5 == 0:
+                self.ittnum += 1
+        else:
+            self.image = pygame.image.load(playeranimation[0][self.immune1][0])
+            self.ittnum = 0
+            self.ittnumtimer = 0
+
+        if self.ittnum > 5:
+            self.ittnum = 0
+            
+            
+
+        self.rect = self.image.get_rect()
         
+        self.xcord += (self.xspeed * (self.reducer * self.reducerup)) #basic player movement
+        self.ycord += self.yspeed        
+        self.rect.x = self.xcord
+        self.rect.y = self.ycord
+
+        self.timer += 1
+        self.ittnumtimer += 1
+        if self.deathtimer > 0:
+            self.deathtimer += 1
+
+
+
             
             
             
@@ -340,7 +434,7 @@ class Floor(parent):
     def __init__(self):
         super().__init__()
         self.ycord = 824
-        self.image = pygame.image.load("Sprites/Ground/itteration0.png")#.convert_alpha()
+        self.image = pygame.image.load("Sprites/Ground/itteration0.png").convert_alpha()
         self.rect = self.image.get_rect()
         self.timer = 0
         self.ittnum = 0
@@ -545,10 +639,7 @@ class Flashart(parent):
         self.image = pygame.image.load(image).convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.y = self.ycord
-        self.rect.x = self.xcord
-
-        
-
+        self.rect.x = self.xcord        
     
 class Highscore(parent):
     def __init__(self):
@@ -558,17 +649,28 @@ class Highscore(parent):
         self.tempy = 200 #temporary y cord for progressing
         self.image = pygame.Surface([0,0])
         self.rect = self.image.get_rect()
-        
 
     def update(self):
         self.tempy = self.ycord
         if self.ycord < -1000:
             pygame.sprite.Sprite.kill(self)
-            print("yep its doin stuff")
             highscore = Highscore()
 
+class Highscore2(parent):
+    def __init__(self):
+        super().__init__()
+        self.xcord = 110
+        self.ycord = 315
+        self.tempy = 200 #temporary y cord for progressing
+        self.image = pygame.Surface([0,0])
+        self.rect = self.image.get_rect()
 
-class Block(parent): #PUSHERROR
+    def update(self):
+        self.tempy = self.ycord
+        if self.ycord < -1000:
+            pygame.sprite.Sprite.kill(self)
+            highscore2 = Highscore2()
+class Block(parent):
     def __init__(self, row, colum, xsize, ysize, color):
         super().__init__()
         self.row = row
@@ -579,13 +681,15 @@ class Block(parent): #PUSHERROR
         self.image = pygame.Surface([self.xsize,self.ysize])
         self.image.fill(self.color)
         self.rect = self.image.get_rect()
-        
 
-    def update(self):
-
-        self.xcord = self.colum
-        self.ycord = self.row
-        
+class Ladder(parent):
+    def __init__(self):
+        super().__init__()
+        self.xcord = 500
+        self.ycord = 800
+        self.image = pygame.Surface([40,40])
+        self.image.fill(black)
+        self.rect = self.image.get_rect()
         self.rect.y = self.ycord
-        self.rect.x = self.xcord
-      
+        self.rect.x = self.xcord  
+        ladders.add(self)

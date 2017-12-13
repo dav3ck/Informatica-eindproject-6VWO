@@ -6,8 +6,9 @@ pygame.init()
 from classes import * #imports all from classes, removes the need for "classes."prepend
 
 black = (0, 0, 0) #defines the colour black
+white = (255,255,255)
 
-withd = 1280 #Brete van scherm
+withd = 1280 #Breedte van scherm
 height = 1024 #Hoogte van scherm
 
 pygame.font.init()
@@ -24,6 +25,12 @@ gamestart = False
 
 highscore = Highscore()
 
+highscore2 = Highscore2()
+
+playernum = 1
+
+lives = 6
+
 #window setup
 screen = pygame.display.set_mode((1280,1024))#, pygame.FULLSCREEN)
 screen_rect=screen.get_rect()
@@ -34,12 +41,17 @@ background = pygame.image.load('Sprites/Extra/Background.png').convert()
 
 pygame.mouse.set_visible(0) #Removed mouse
 
-player = Player(640, 752) #creates the player
+player = Player(600,752) #creates the player
+player2 = Player2(680,752)
 
 #creates play envoirment 
 floor = Floor()
 wall = Wall(0) #left wall
 wall = Wall(1275) #right wall
+
+ladder = Ladder()
+
+
 flashart = Flashart("Sprites/Extra/Flash.png", 0, 0)
 
 pygame.mixer.music.load("Theme.wav")
@@ -75,14 +87,18 @@ while True:
             elif event.key == pygame.K_SPACE: #shoot button
                 if gamestart == False:
                     gamestart = True
-                    ball = Ball(1,500,70, False)
+                    ball = Ball(1,500,70)
                     pygame.sprite.Sprite.kill(flashart)
-                if player.alive == True:
-                    if player.ammo > 0 and spawntimer > 0:
-                        bullet = Bullet(player.xcord,player.ycord)
-                        player.ammo -= 1
-                        player.fire = True
-                elif len(keyboards) == 1:
+                    if playernum == 1:
+                        pygame.sprite.Sprite.kill(player2)
+                        lives = 3
+                if player2.alive == True and playernum == 2:
+                    if player2.ammo > 0 and spawntimer > 0:
+                        bullet = Bullet(player2.xcord,player2.ycord)
+                        player2.ammo -= 1
+                        player2.fire = True
+            elif event.key == pygame.K_RETURN:
+                if len(keyboards) == 1:
                     if textbox.ittnum < 5:
                         if (keyboard.capital == False and keyboard.num < 38): 
                             keyboard.name = keyboard.name + keyboard.alphabet[keyboard.num] #adds letter to list with name
@@ -107,22 +123,34 @@ while True:
                             if textbox.ittnum < 0:
                                 textbox.ittnum = 0
                     elif keyboard.num == 40: #submits score and resets game
-                        if len(keyboard.name) != 0:
-                            with open('highscores.txt','a') as f:
-                                f.write(scoredisp + " - " + keyboard.name + "\n")
+                        if playernum == 1:
+                            if len(keyboard.name) != 0:
+                                with open('highscores.txt','a') as f:
+                                    f.write(scoredisp + " - " + keyboard.name + "\n")
+                            highscores = []
+                            with open('highscores.txt', 'r') as r:
+                                for line in sorted(r):
+                                    highscores.insert(0, line)
+                        else:
+                            if len(keyboard.name) != 0:
+                                with open('highscores2.txt','a') as f:
+                                    f.write(scoredisp + " - " + keyboard.name + "\n")
+                            highscores2 = []
+                            with open('highscores2.txt', 'r') as r:
+                                for line in sorted(r):
+                                    highscores2.insert(0, line)
                         for sprite in everything:
                             pygame.sprite.Sprite.kill(sprite)
-                        highscores = []
-                        with open('highscores.txt', 'r') as r:
-                            for line in sorted(r):
-                                highscores.insert(0, line)
                         gamestart = False
                         player = Player()
+                        player2 = Player2()
                         floor = Floor()
                         wall = Wall(0)
                         wall = Wall(1275)
                         highscore = Highscore()
+                        highscore2 = Highscore2()
                         flashart = Flashart("Sprites/Extra/Flash.png", 0, 0)
+                        lives = 6
             elif event.key == pygame.K_r: #reload
                 player.reload()
             elif event.key == pygame.K_m:
@@ -130,6 +158,29 @@ while True:
             elif event.key == pygame.K_n:
                 screen = pygame.display.set_mode((1280,1024))
                 pygame.mouse.set_visible(1)
+            elif event.key == pygame.K_KP0:
+                if player.alive == True:
+                    if player.ammo > 0 and spawntimer > 0:
+                        bullet = Bullet(player.xcord,player.ycord)
+                        player.ammo -= 1
+                        player.fire = True
+            elif event.key == pygame.K_a: #move left
+                if player2.alive == True and gamestart == True:
+                    player2.changespeed(-5)
+            elif event.key == pygame.K_d: #move right
+                if player2.alive == True and gamestart == True:
+                    player2.changespeed(5)
+            elif event.key == pygame.K_w:
+                if player2.alive == True:
+                    print("there seems to be nothing here...")
+            elif event.key == pygame.K_s:
+                if player2.alive == True:
+                    print("there seems to be nothing here...")
+            elif event.key == pygame.K_p and gamestart == False:
+                if playernum == 1:
+                    playernum = 2
+                else:
+                    playernum =1
         elif event.type == pygame.KEYUP: #handles all key releases
             if event.key == pygame.K_LEFT: #left key release
                 if player.alive == True and gamestart == True:
@@ -137,20 +188,38 @@ while True:
             elif event.key == pygame.K_RIGHT: #right key release
                 if player.alive == True and gamestart == True:
                     player.changespeed(-5)
+            elif event.key == pygame.K_a:
+                if player2.alive == True and gamestart == True:
+                    player2.changespeed(5)
+            elif event.key == pygame.K_d:
+                if player2.alive == True and gamestart == True:
+                    player2.changespeed(-5)
+        
 
     #GUI text
-    prescore = str(int(player.killcount * 100))
-    zeros = 6 - len(prescore)
-    scoredisp = '0' * zeros + prescore
+    if playernum == 1:
+        prescore = str(int(player.killcount * 100))
+        zeros = 6 - len(prescore)
+        scoredisp = '0' * zeros + prescore
+    else:
+        prescore = str(int((player.killcount + player2.killcount)* 100))
+        zeros = 6 - len(prescore)
+        scoredisp = '0' * zeros + prescore        
     
     scoretext = myfont.render(scoredisp, False, black)
     ammotext = myfont.render(str(player.ammo), False, black)
-    lifetext = myfont.render(str(player.lives), False, black)    
+    ammotext2 = myfont.render(str(player2.ammo), False, white)
+    lifetext = myfont.render(str(lives), False, black)
+    playertext = myfontsmall.render("Number of players: " + str(playernum)+ " (press P to change)", False, white)
 
     #Game logica
     spawntimer += 1
 
     globaltimer += 1
+
+    if lives <= 0:
+        player.alive = False
+        player2.alive = False
 
     if player.alive == False and player.once == 1:
         flashart = Flashart("Sprites/Extra/GameOver.png", 414 , 50)
@@ -166,7 +235,14 @@ while True:
         if player.ammotimer == 120:
             player.ammo = 10
             player.reducer = 1
-            player.ammotimer = 0
+            player.ammotimer = 0    
+    if player2.ammo == 0: #reload mechanics
+        player2.reducer = 0.5
+        player2.ammotimer += 1
+        if player2.ammotimer == 120:
+            player2.ammo = 10
+            player2.reducer = 1
+            player2.ammotimer = 0
     if player.ammo > 0 and player.ammotimer > 0: #alowss abortion of reloading
         player.reducer = 1
         player.ammotimer = 0
@@ -179,7 +255,17 @@ while True:
                 ball.yspeed = 9.5
             if player.immune == False:
                 player.immune = True
-                player.lives -= 1
+                lives -= 1
+    
+    for ball in balls:
+        if globaltimer >= 1 and playernum == 2:
+            hits = pygame.sprite.spritecollide(player2, balls, False) #ball on player colisions
+            for ball in hits:
+                if ball.typenum == 0:
+                    ball.yspeed = 9.5
+                if player2.immune == False:
+                    player2.immune = True
+                    lives -= 1
                 
     for bullet in bullets:
         hits = pygame.sprite.spritecollide(bullet, balls, True) #bullet on ball collisions
@@ -187,12 +273,12 @@ while True:
             if ball.ycord > 50:
                 pygame.sprite.Sprite.kill(bullet)
                 if ball.check == 1:
-                    ball = Ball(2,ball.xcord,ball.ycord, False)
-                    ball = Ball(3,ball.xcord,ball.ycord, False)
+                    ball = Ball(2,ball.xcord,ball.ycord)
+                    ball = Ball(3,ball.xcord,ball.ycord)
                     player.killcount += 1
                 elif ball.check == 2 or ball.check == 3:
-                    ball = Ball(4,ball.xcord,ball.ycord, False)
-                    ball = Ball(5,ball.xcord,ball.ycord, False)
+                    ball = Ball(4,ball.xcord,ball.ycord)
+                    ball = Ball(5,ball.xcord,ball.ycord)
                     player.killcount += 1
                 else:
                     player.killcount += 3
@@ -244,6 +330,11 @@ while True:
     for upgrade in upgrades: #ends the powerups
         upgrade.powerdown(player,ball,balls)
 
+    for player in players: #ladders
+        hits = pygame.sprite.spritecollide(ladder, players, False)
+        for player in hits:
+            print("ladders yee haw")
+
     #spawning                
     if globaltimer < 3600:
         spawninterval = int(-1 / 14400 * math.pow(globaltimer, 2) + 1800)
@@ -251,7 +342,7 @@ while True:
         spawninterval = 900
 
     if ((player.killcount > 12 and len(balls) < 2) or spawntimer == spawninterval): #auto spawns balls
-        ball = Ball(1,500,70, False)
+        ball = Ball(1,500,70)
         spawntimer = 0
 
     if globaltimer % 900 == 0: 
@@ -268,6 +359,11 @@ while True:
         player.xcord = (withd - 50)
     elif player.xcord < 0:
         player.xcord = 0
+
+    if player2.xcord > (withd - 50):
+        player2.xcord = (withd - 50)
+    elif player2.xcord < 0:
+        player2.xcord = 0
         
     screen.blit(background,(0,0))
     
@@ -278,17 +374,24 @@ while True:
     screen.blit(scoretext,(880,950))
     screen.blit(ammotext, (380, 950))
     screen.blit(lifetext, (205, 950))
+    screen.blit(playertext, (10, 10))
+    screen.blit(ammotext2, (500, 950))
     
     if player.alive == False and player.once > 2:
         globaltimer = 0
-        spawntimer = 0
-        
-    if gamestart == False:
+        spawntimer = 0    
+    if gamestart == False and playernum == 1:
         globaltimer = 0
         spawntimer = 0
         for i in range(10):
             screen.blit(myfontsmall.render(str(i + 1) + ". " + str(highscores[i]).replace("\n",""), False, black), (highscore.xcord, highscore.tempy))
             highscore.tempy += 40
+    elif gamestart == False and playernum == 2:
+        globaltimer = 0
+        spawntimer = 0
+        for i in range(10):
+            screen.blit(myfontsmall.render(str(i + 1) + ". " + str(highscores2[i]).replace("\n",""), False, black), (highscore2.xcord, highscore2.tempy))
+            highscore2.tempy += 40        
             
     #Flip
     
