@@ -127,7 +127,7 @@ class parent(pygame.sprite.Sprite):
         everything.add(self)
 
 class Ball(parent):
-    def __init__(self,check,x,y, freeze):
+    def __init__(self,check,x,y,freeze):
         super().__init__()
         self.xcord = x
         self.ycord = y
@@ -139,6 +139,7 @@ class Ball(parent):
         self.ittnum = 0 #what itteration ball animation is on
         self.launch = 10
         self.stop = False #Gebruikt bij stop upgrade
+        self.freeze = freeze
         if check == 1: #biggest ball
             self.xspeed = -2
             self.dia = 160

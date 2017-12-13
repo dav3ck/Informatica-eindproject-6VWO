@@ -87,7 +87,7 @@ while True:
             elif event.key == pygame.K_SPACE: #shoot button
                 if gamestart == False:
                     gamestart = True
-                    ball = Ball(1,500,70)
+                    ball = Ball(1,500,70, False)
                     pygame.sprite.Sprite.kill(flashart)
                     if playernum == 1:
                         pygame.sprite.Sprite.kill(player2)
@@ -273,12 +273,12 @@ while True:
             if ball.ycord > 50:
                 pygame.sprite.Sprite.kill(bullet)
                 if ball.check == 1:
-                    ball = Ball(2,ball.xcord,ball.ycord)
-                    ball = Ball(3,ball.xcord,ball.ycord)
+                    ball = Ball(2,ball.xcord,ball.ycord, False)
+                    ball = Ball(3,ball.xcord,ball.ycord, False)
                     player.killcount += 1
                 elif ball.check == 2 or ball.check == 3:
-                    ball = Ball(4,ball.xcord,ball.ycord)
-                    ball = Ball(5,ball.xcord,ball.ycord)
+                    ball = Ball(4,ball.xcord,ball.ycord, False)
+                    ball = Ball(5,ball.xcord,ball.ycord, False)
                     player.killcount += 1
                 else:
                     player.killcount += 3
@@ -342,7 +342,7 @@ while True:
         spawninterval = 900
 
     if ((player.killcount > 12 and len(balls) < 2) or spawntimer == spawninterval): #auto spawns balls
-        ball = Ball(1,500,70)
+        ball = Ball(1,500,70,False)
         spawntimer = 0
 
     if globaltimer % 900 == 0: 
