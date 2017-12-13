@@ -128,7 +128,7 @@ class parent(pygame.sprite.Sprite):
         everything.add(self)
 
 class Ball(parent):
-    def __init__(self,check, x, y, freeze):
+    def __init__(self,check, x, y, freeze): #PUSHERROR
         super().__init__()
         self.xcord = x
         self.ycord = y
@@ -176,7 +176,7 @@ class Ball(parent):
         
 
     def update(self):
-        if self.freeze == False:
+        if self.freeze == False: #PUSHERROR
             self.xcord += self.xspeed #handles ball horizontal movement
 
         self.timer += 1
@@ -215,7 +215,7 @@ class Wall(parent):
         walls.add(self)
 
 class Player(parent):
-    def __init__(self, x,y):
+    def __init__(self, x,y): #PUSHERROR
         super().__init__()
         self.reducer = 1
         self.reducerup = 1
@@ -568,7 +568,7 @@ class Highscore(parent):
             highscore = Highscore()
 
 
-class Block(parent):
+class Block(parent): #PUSHERROR
     def __init__(self, row, colum, xsize, ysize, color):
         super().__init__()
         self.row = row
