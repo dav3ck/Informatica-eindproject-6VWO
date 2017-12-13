@@ -10,11 +10,14 @@ height = 1024
 xlines = 40
 ylines = 40
 
+
 name = ''
 keyboard = 0
 editor_colum = 1
 
 movingblockcord = 0
+confirm = True
+
 
 
     #Variable Colors
@@ -52,6 +55,7 @@ Level.append(row)
 
 everything = pygame.sprite.Group() #list that will hold everything
 blocks = pygame.sprite.Group()
+popups = pygame.sprite.Group()
 
 class parent(pygame.sprite.Sprite):
     def __init__(self):
@@ -76,6 +80,7 @@ class Curser(parent):
         self.blockvalue = 6
         self.blocksize = True
         self.Error = False
+        self.playercount = 0
 
 
 
@@ -119,6 +124,25 @@ class Block(parent):
 
         self.rect.y = self.ycord
         self.rect.x = self.xcord
+
+class Popup(parent):
+    def __init__(self,):
+        super().__init__()
+        self.xcord = 500
+        self.ycord = 500
+        self.image = pygame.Surface([200,200])
+        self.image.fill(white)
+        self.rect = self.image.get_rect()
+        self.confirm = False
+        popups.add(self)
+
+    def update(self):
+        self.rect.y = self.ycord
+        self.rect.x = self.xcord
+
+        txt_popup = font.render(str(popup.confirm), True, red)
+        screen.blit(txt_popup, (510, 550))
+            
         
 
 #functies
@@ -144,6 +168,9 @@ def writearray(value, row, colum):
         for x in range(movingblockcord + 2 - colum):
             if x != 0:
                 Level[0][row][colum + x] = 'b'
+
+    elif value == 1:
+        curser.playercount = curser.playercount + 1
             
 #Deze functie verwijderd de code
 
@@ -181,7 +208,9 @@ def check(value, row, colum):
             for y in range(4):
                 if row + x < 0 or colum + y > 31 or type(Level[0][row + x][colum + y]) is str or Level[0][row + x][colum + y] != 0 or Level[0][row + x][colum + y] == 9:
                     Error = True
-
+    elif value == 1 and curser.playercount == 2:
+        Error = True
+            
     else:
         if Level[0][row][colum] != 0:
             Error = True
@@ -206,6 +235,10 @@ def movement():
         curser.color = green
     elif curser.blockvalue == 6:
         curser.color = white
+    elif curser.blockvalue == 1:
+        curser.xsize = 40
+        curser.ysize = 80
+        curser.color = green
     else:
         curser.color = yellow
 
@@ -225,6 +258,57 @@ def offscreen():
 def editor_value(editor_colum):
     if editor_colum != 0:
         curser.blockvalue = editor_colum
+
+def keyboardpopup(text):
+    confirm = False
+    keyboardpopupvalue = 1
+    while keyboardpopupvalue == 1:
+        for event in pygame.event.get(): #handles closing the window
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            elif event.type == pygame.KEYDOWN and curser.Error == False:
+                if event.key == pygame.K_LEFT:
+                    popup.confirm = False
+                elif event.key == pygame.K_RIGHT:
+                    popup.confirm = True
+                elif event.key == pygame.K_SPACE:
+                    pygame.sprite.Sprite.kill(popup)
+                    popup.txt = font.render('', True, red)
+                    keyboardpopupvalue = 0
+                    return popup.confirm
+        screenmanage(40,40,1280,1024, text)
+
+def screenmanage(xlines, ylines, width, height, text):
+    everything.update()
+
+    screen.fill(black)
+
+    
+    while xlines < width or ylines < (height - 184):
+        pygame.draw.line(screen, white, (xlines, 0), (ylines, (height - 184)))
+        if ylines <= 840:
+            pygame.draw.line(screen, white, (0, ylines), (width, ylines))
+        xlines += 40
+        ylines += 40
+    xlines = 40
+    ylines = 40
+
+    everything.draw(screen)
+
+    txt_surface = font.render(name, True, red)
+    screen.blit(txt_surface, (0, 0))
+    
+    txt_popup = font.render(text, True, red)
+    screen.blit(txt_popup, (510, 550))
+
+    if len(popups) > 0:
+        txt_popup = font.render(str(popup.confirm), True, red)
+        screen.blit(txt_popup, (510, 650))
+   
+    pygame.display.flip()
+
+    clock.tick(60)
+    
 
     
 
@@ -265,8 +349,10 @@ while True:
                             
                 elif event.key == pygame.K_p:
                     print(curser.colum, curser.row)
+                    print(curser.playercount)
                 elif event.key == pygame.K_c:
-                    print(Level)
+                    popup = Popup("Het werkt")
+                    keyboard = 3
                 elif event.key == pygame.K_q:
                     curser.blockvalue += 1
                     print(curser.blockvalue)
@@ -276,12 +362,15 @@ while True:
                 elif event.key == pygame.K_r:
                     cleararray(curser.row, curser.colum)
                 elif event.key == pygame.K_s:
-                    with open('Levels.txt', 'a') as f:
-                        f.write(name + "\n")
-                        for x in range(21):
-                            for y in range(32):
-                                f.write(str(Level[0][x][y]))
-                            f.write("\n")
+                    popup = Popup()
+                    if keyboardpopup("Weet je zeker dat je klaar bent?") == True:
+                        print("WE ARE THROUGH BOOIS")
+                        with open('Levels.txt', 'a') as f:
+                            f.write(name + "\n")
+                            for x in range(21):
+                                for y in range(32):
+                                    f.write(str(Level[0][x][y]))
+                                f.write("\n")
                             
                             
                         
@@ -330,6 +419,9 @@ while True:
                     block = Block(curser.xsize, curser.ysize, curser.color, curser.row, curser.colum)
                     writearray(curser.blockvalue, curser.row, curser.colum)
                     keyboard = 0
+
+    
+        
                     
 
             
@@ -344,33 +436,12 @@ while True:
 
         
                 
+    screenmanage(40,40,1280,1024, '')
     
-
  
                  
 
 
     #Unimportant
     
-    everything.update()
-
-    screen.fill(black)
-
-    txt_surface = font.render(name, True, red)
-    screen.blit(txt_surface, (0, 0))
     
-    everything.draw(screen)
-
-    while xlines < width or ylines < (height - 184):
-        pygame.draw.line(screen, white, (xlines, 0), (ylines, (height - 184)))
-        if ylines <= 840:
-            pygame.draw.line(screen, white, (0, ylines), (width, ylines))
-        xlines += 40
-        ylines += 40
-    xlines = 40
-    ylines = 40
-
-   
-    pygame.display.flip()
-
-    clock.tick(60)
