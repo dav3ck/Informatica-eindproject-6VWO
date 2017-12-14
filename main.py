@@ -41,15 +41,13 @@ background = pygame.image.load('Sprites/Extra/Background.png').convert()
 
 pygame.mouse.set_visible(0) #Removed mouse
 
-player = Player(600,752) #creates the player
+player = Player(600,800) #creates the player
 player2 = Player2(680,752)
 
 #creates play envoirment 
 floor = Floor()
 wall = Wall(0) #left wall
 wall = Wall(1275) #right wall
-
-ladder = Ladder()
 
 
 flashart = Flashart("Sprites/Extra/Flash.png", 0, 0)
@@ -142,8 +140,8 @@ while True:
                         for sprite in everything:
                             pygame.sprite.Sprite.kill(sprite)
                         gamestart = False
-                        player = Player()
-                        player2 = Player2()
+                        player = Player(600,752)
+                        player2 = Player2(600,752)
                         floor = Floor()
                         wall = Wall(0)
                         wall = Wall(1275)
@@ -152,7 +150,7 @@ while True:
                         flashart = Flashart("Sprites/Extra/Flash.png", 0, 0)
                         lives = 6
             elif event.key == pygame.K_r: #reload
-                player.reload()
+                player2.reload()
             elif event.key == pygame.K_m:
                 screen = pygame.display.set_mode((1280,1024), pygame.FULLSCREEN)
             elif event.key == pygame.K_n:
@@ -164,6 +162,8 @@ while True:
                         bullet = Bullet(player.xcord,player.ycord)
                         player.ammo -= 1
                         player.fire = True
+            elif event.key == pygame.K_KP1:
+                player.reload()
             elif event.key == pygame.K_a: #move left
                 if player2.alive == True and gamestart == True:
                     player2.changespeed(-5)
@@ -181,6 +181,10 @@ while True:
                     playernum = 2
                 else:
                     playernum =1
+            elif event.key == pygame.K_o:
+                upgrade = Upgrade(0)
+
+            
         elif event.type == pygame.KEYUP: #handles all key releases
             if event.key == pygame.K_LEFT: #left key release
                 if player.alive == True and gamestart == True:
@@ -321,19 +325,21 @@ while True:
             pygame.sprite.Sprite.kill(bullet)
 
     for upgrade in upgrades: #runs the powerups
-        hits = pygame.sprite.spritecollide(upgrade, players, False)
-        for player in hits:
+        hits = pygame.sprite.spritecollide(player, upgrades, False)
+        for upgrade in hits:
             upgrade.yspeed = 0
             upgrade.powerup(player,ball,balls)
+            player.killcount += 0.5
+
+    for upgrade in upgrades: #runs the powerups
+        hits = pygame.sprite.spritecollide(player2, upgrades, False)
+        for upgrade in hits:
+            upgrade.yspeed = 0
+            upgrade.powerup(player2,ball,balls)
             player.killcount += 0.5
                                                 
     for upgrade in upgrades: #ends the powerups
         upgrade.powerdown(player,ball,balls)
-
-    for player in players: #ladders
-        hits = pygame.sprite.spritecollide(ladder, players, False)
-        for player in hits:
-            print("ladders yee haw")
 
     #spawning                
     if globaltimer < 3600:
