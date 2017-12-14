@@ -95,23 +95,23 @@ def spawnitems(y,x, typ):
     y = y * 40
     x = x * 40
     
-    if typ == '1':
-        player = Player(x,y)
-    elif typ == '2':
+    if typ == '1':                                                              #player
+        player = Player(x,y)    
+    elif typ == '2':                                                            #ladder
         block = Block(y,x,1,1,black)
-    elif typ == '3':
+    elif typ == '3':                                                            #Static platform
         block = Block(y,x,1,1,blue)
-    elif typ == '4':
-        block = Block(y,x,1,1,blue)
-    elif typ == '5':
-        block = Block(y,x,1,1,green)
-    elif typ == '6':
+    elif typ == '4':                                                            #Breakable platform
+        block = Block(y,x,1,1,blue)                                             
+    elif typ == '5':                                                            #vertical wall
+        block = Block(y,x,1,1,green)                                            
+    elif typ == '6':                                                            #moving platform
         block = Block(y,x,1,1,white)
-    elif typ == '7':
+    elif typ == '7':                                                            #small slime
         ball = Ball(4,x,y, True)
-    elif typ == '8':
+    elif typ == '8':                                                            #medium slime
         ball = Ball(2,x,y, True)
-    elif typ == '9':
+    elif typ == '9':                                                            #Big slime
         ball = Ball(1,x,y, True)
 
 
