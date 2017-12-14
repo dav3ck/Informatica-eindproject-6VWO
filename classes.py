@@ -2,7 +2,7 @@ import pygame
 import random
 
 #colour variables
-black = (0, 0, 0) 
+black = (0, 0, 0)
 white = (255, 255, 255)
 
 #lists
@@ -87,7 +87,7 @@ for i in range(3):
 
 keyboardanimation = [] #Array met alle Keyboard sprites erin
 
-for i in range(81): #Zelfde als voor slime animatie sprites alleen dit keer kleiner 
+for i in range(81): #Zelfde als voor slime animatie sprites alleen dit keer kleiner
     legacy0 = "Sprites/Keyboard/Itteration" + str(i) + ".png"
     keyboardanimation.append(legacy0)
 
@@ -95,7 +95,7 @@ for i in range(81): #Zelfde als voor slime animatie sprites alleen dit keer klei
 
 groundanimation = [] #Array met alle ground sprites
 
-for i in range(5): #Zelfde als voor slime animatie sprites alleen dit keer kleiner 
+for i in range(5): #Zelfde als voor slime animatie sprites alleen dit keer kleiner
     legacy0 = "Sprites/Ground/itteration" + str(i) + ".png"
     groundanimation.append(legacy0)
 
@@ -103,7 +103,7 @@ for i in range(5): #Zelfde als voor slime animatie sprites alleen dit keer klein
 
 textboxanimation = [] #Array met alle ground sprites
 
-for i in range(7): #Zelfde als voor slime animatie sprites alleen dit keer kleiner 
+for i in range(7): #Zelfde als voor slime animatie sprites alleen dit keer kleiner
     legacy0 = "Sprites/Textbox/itteration" + str(i) + ".png"
     textboxanimation.append(legacy0)
 
@@ -113,7 +113,7 @@ letteranimation = []
 for i in range (64):
     legacy0 = "Sprites/letters/l0_letter" + str(i) + ".png"
     letteranimation.append(legacy0)
-    
+
 
 #class defenitions
 class parent(pygame.sprite.Sprite):
@@ -168,10 +168,10 @@ class Ball(parent):
             self.weight = 0.3
             self.sizenum = 2
             self.image = pygame.image.load("Sprites/balls/size2/type0/variation0/itteration0.png")
-            
+
         self.rect = self.image.get_rect()
         balls.add(self)
-        
+
 
     def update(self):
         if self.freeze == False:
@@ -210,7 +210,7 @@ class Wall(parent):
         self.rect = self.image.get_rect()
         self.rect.y = self.ycord
         self.rect.x = self.xcord
-        walls.add(self)       
+        walls.add(self)
 
 class Player(parent):
     def __init__(self,x,y):
@@ -241,7 +241,7 @@ class Player(parent):
 
     def changespeed(self,x):
         self.xspeed += x
-            
+
 
     def reload(self):
         self.ammo = 0
@@ -257,17 +257,17 @@ class Player(parent):
 
         else:
             self.immune1 = 0
-                
+
         if self.alive == False:
             self.xspeed = 0
             self.yspeed = 0
-            self.once += 1 
- 
+            self.once += 1
+
 
         if self.shooter == True and self.timer % 5 == 0:
             bullet = Bullet(self.xcord, self.ycord)
 
-            
+
         if self.alive == False:
             self.image = pygame.image.load("Sprites/Extra/Death.png")
         elif self.fire == True and self.xspeed == 0:
@@ -293,13 +293,13 @@ class Player(parent):
 
         if self.ittnum > 5:
             self.ittnum = 0
-            
-            
+
+
 
         self.rect = self.image.get_rect()
-        
+
         self.xcord += (self.xspeed * (self.reducer * self.reducerup)) #basic player movement
-        self.ycord += self.yspeed        
+        self.ycord += self.yspeed
         self.rect.x = self.xcord
         self.rect.y = self.ycord
 
@@ -337,7 +337,7 @@ class Player2(parent):
 
     def changespeed(self,x):
         self.xspeed += x
-            
+
 
     def reload(self):
         self.ammo = 0
@@ -353,17 +353,17 @@ class Player2(parent):
 
         else:
             self.immune1 = 0
-                
+
         if self.alive == False:
             self.xspeed = 0
             self.yspeed = 0
-            self.once += 1 
- 
+            self.once += 1
+
 
         if self.shooter == True and self.timer % 5 == 0:
             bullet = Bullet(self.xcord, self.ycord)
 
-            
+
         if self.alive == False:
             self.image = pygame.image.load("Sprites/Extra/Death.png")
         elif self.fire == True and self.xspeed == 0:
@@ -389,13 +389,13 @@ class Player2(parent):
 
         if self.ittnum > 5:
             self.ittnum = 0
-            
-            
+
+
 
         self.rect = self.image.get_rect()
-        
+
         self.xcord += (self.xspeed * (self.reducer * self.reducerup)) #basic player movement
-        self.ycord += self.yspeed        
+        self.ycord += self.yspeed
         self.rect.x = self.xcord
         self.rect.y = self.ycord
 
@@ -406,10 +406,10 @@ class Player2(parent):
 
 
 
-            
-            
-            
-            
+
+
+
+
 
 
 class Bullet(parent):
@@ -421,7 +421,7 @@ class Bullet(parent):
         self.image = pygame.image.load("Sprites/Extra/Bullet.png").convert()
         self.rect = self.image.get_rect()
         bullets.add(self)
-        
+
 
     def update(self):
         self.ycord -= self.yspeed #moving the ball up
@@ -449,10 +449,10 @@ class Floor(parent):
 
         if self.ittnum == 4:
             self.ittnum = 0
-        
-        
-        
-#Powerups 
+
+
+
+#Powerups
 
 class Upgrade(parent):
     def __init__(self,check):
@@ -470,7 +470,7 @@ class Upgrade(parent):
         self.timer = 0
         self.check = check
         upgrades.add(self)
-        
+
         self.type = 0 #welke animatie
         self.ittnum = 0
         self.var = 0
@@ -493,7 +493,7 @@ class Upgrade(parent):
         elif self.check == 2: #extera life
             player.lives += 1
             pygame.sprite.Sprite.kill(self)
-        
+
         #sterke powerups
         elif self.check == 3: #slimes slow
             for ball in balls:
@@ -513,7 +513,7 @@ class Upgrade(parent):
             player.lives += 3
             pygame.sprite.Sprite.kill(self)
 
-            
+
     def powerdown(self,player,ball,balls):
         if self.active == True:
             if self.timer > 600 and self.check ==1:
@@ -559,8 +559,8 @@ class Upgrade(parent):
         self.rect.x = self.xcord
         if self.xcord < -100 or self.xcord > 1340 or self.despawn > 300:
             pygame.sprite.Sprite.kill(self)
-        
-        
+
+
 
 class Keyboard(parent): #Keyboard class
     def __init__(self):
@@ -574,15 +574,15 @@ class Keyboard(parent): #Keyboard class
         self.name = ""
         self.alphabet = (" ","1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y" , "z", " ", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", " ")
         keyboards.add(self)
-        
+
     def update(self):
         self.rect.y = self.ycord
         self.rect.x = self.xcord
         if self.num > 40: #Zorgt ervoor dat het tussen de 1 tm 40 blijft
-            self.num = self.num - 40 
+            self.num = self.num - 40
         elif self.num < 1:
             self.num = 40 + self.num
-        if self.capital == False: 
+        if self.capital == False:
             self.image = pygame.image.load(keyboardanimation[self.num])
         elif self.capital == True:
             self.image = pygame.image.load(keyboardanimation[self.num + 40])
@@ -605,7 +605,7 @@ class Textbox(parent):
         self.rect = self.image.get_rect()
         self.rect.y = self.ycord
         self.rect.x = self.xcord
-        
+
 
 class Letter(parent):
     def __init__(self, ittnum, num, capital):
@@ -625,7 +625,7 @@ class Letter(parent):
         letters.add(self)
 
     def update(self):
-        
+
         self.rect = self.image.get_rect()
         self.rect.y = self.ycord
         self.rect.x = self.xcord
@@ -639,8 +639,8 @@ class Flashart(parent):
         self.image = pygame.image.load(image).convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.y = self.ycord
-        self.rect.x = self.xcord        
-    
+        self.rect.x = self.xcord
+
 class Highscore(parent):
     def __init__(self):
         super().__init__()
@@ -691,5 +691,5 @@ class Ladder(parent):
         self.image.fill(black)
         self.rect = self.image.get_rect()
         self.rect.y = self.ycord
-        self.rect.x = self.xcord  
+        self.rect.x = self.xcord
         ladders.add(self)
