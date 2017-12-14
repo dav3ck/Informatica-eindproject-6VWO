@@ -29,7 +29,6 @@ highscore2 = Highscore2()
 
 playernum = 1
 
-lives = 6
 
 #window setup
 screen = pygame.display.set_mode((1280,1024))#, pygame.FULLSCREEN)
@@ -89,7 +88,7 @@ while True:
                     pygame.sprite.Sprite.kill(flashart)
                     if playernum == 1:
                         pygame.sprite.Sprite.kill(player2)
-                        lives = 3
+                        player.lives = 3
                 if player2.alive == True and playernum == 2:
                     if player2.ammo > 0 and spawntimer > 0:
                         bullet = Bullet(player2.xcord,player2.ycord)
@@ -148,7 +147,7 @@ while True:
                         highscore = Highscore()
                         highscore2 = Highscore2()
                         flashart = Flashart("Sprites/Extra/Flash.png", 0, 0)
-                        lives = 6
+                        player.lives = 6
             elif event.key == pygame.K_r: #reload
                 player2.reload()
             elif event.key == pygame.K_m:
@@ -180,11 +179,7 @@ while True:
                 if playernum == 1:
                     playernum = 2
                 else:
-                    playernum =1
-            elif event.key == pygame.K_o:
-                upgrade = Upgrade(0)
-
-            
+                    playernum =1            
         elif event.type == pygame.KEYUP: #handles all key releases
             if event.key == pygame.K_LEFT: #left key release
                 if player.alive == True and gamestart == True:
@@ -213,7 +208,7 @@ while True:
     scoretext = myfont.render(scoredisp, False, black)
     ammotext = myfont.render(str(player.ammo), False, black)
     ammotext2 = myfont.render(str(player2.ammo), False, white)
-    lifetext = myfont.render(str(lives), False, black)
+    lifetext = myfont.render(str(player.lives), False, black)
     playertext = myfontsmall.render("Number of players: " + str(playernum)+ " (press P to change)", False, white)
 
     #Game logica
@@ -221,7 +216,7 @@ while True:
 
     globaltimer += 1
 
-    if lives <= 0:
+    if player.lives <= 0:
         player.alive = False
         player2.alive = False
 
@@ -259,7 +254,7 @@ while True:
                 ball.yspeed = 9.5
             if player.immune == False:
                 player.immune = True
-                lives -= 1
+                player.lives -= 1
     
     for ball in balls:
         if globaltimer >= 1 and playernum == 2:
@@ -269,7 +264,7 @@ while True:
                     ball.yspeed = 9.5
                 if player2.immune == False:
                     player2.immune = True
-                    lives -= 1
+                    player.lives -= 1
                 
     for bullet in bullets:
         hits = pygame.sprite.spritecollide(bullet, balls, True) #bullet on ball collisions
@@ -328,14 +323,14 @@ while True:
         hits = pygame.sprite.spritecollide(player, upgrades, False)
         for upgrade in hits:
             upgrade.yspeed = 0
-            upgrade.powerup(player,ball,balls)
+            upgrade.powerup(player,ball,balls,player)
             player.killcount += 0.5
 
     for upgrade in upgrades: #runs the powerups
         hits = pygame.sprite.spritecollide(player2, upgrades, False)
         for upgrade in hits:
             upgrade.yspeed = 0
-            upgrade.powerup(player2,ball,balls)
+            upgrade.powerup(player2,ball,balls,player)
             player.killcount += 0.5
                                                 
     for upgrade in upgrades: #ends the powerups

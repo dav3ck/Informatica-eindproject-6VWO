@@ -238,6 +238,7 @@ class Player(parent):
         self.immune1 = 0 #1 of 0 waarde als iets immune is
         players.add(self)
         self.deathtimer = 0
+        self.lives = 6
         self.ladder = False
 
     def changespeed(self,x):
@@ -480,7 +481,7 @@ class Upgrade(parent):
         self.rect = self.image.get_rect()
 
 
-    def powerup(self,player,ball,balls):
+    def powerup(self,player,ball,balls,playercheck):
         self.detimer = 0
         self.active = True
         #zwakke powerups
@@ -492,7 +493,7 @@ class Upgrade(parent):
             self.timer = 0
             self.vanish()
         elif self.check == 2: #extera life
-            player.lives += 1
+            playercheck.lives += 1
             pygame.sprite.Sprite.kill(self)
 
         #sterke powerups
@@ -511,7 +512,7 @@ class Upgrade(parent):
             self.timer = 0
             self.vanish()
         elif self.check == 5: #super extera life
-            player.lives += 3
+            playercheck.lives += 3
             pygame.sprite.Sprite.kill(self)
 
 
