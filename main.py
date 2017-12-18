@@ -27,6 +27,8 @@ highscore = Highscore()
 
 highscore2 = Highscore2()
 
+ladder = Ladder()
+
 playernum = 1
 
 
@@ -52,7 +54,7 @@ wall = Wall(1275) #right wall
 flashart = Flashart("Sprites/Extra/Flash.png", 0, 0)
 
 pygame.mixer.music.load("Theme.wav")
-pygame.mixer.music.play(loops=-1, start=0.0)
+#pygame.mixer.music.play(loops=-1, start=0.0)
 
 
 #main game loop
@@ -73,12 +75,12 @@ while True:
                     keyboard.num += 1
             elif event.key == pygame.K_UP:
                 if player.alive == True:
-                    print("there seems to be nothing here...")
+                    player.changeyspeed(-5)
                 elif len(keyboards) == 1:
                     keyboard.num -= 10
             elif event.key == pygame.K_DOWN:
                 if player.alive == True:
-                    print("there seems to be nothing here...")
+                    player.changeyspeed(5)
                 elif len(keyboards) == 1:
                     keyboard.num += 10
             elif event.key == pygame.K_SPACE: #shoot button
@@ -187,6 +189,14 @@ while True:
             elif event.key == pygame.K_RIGHT: #right key release
                 if player.alive == True and gamestart == True:
                     player.changespeed(-5)
+            elif event.key == pygame.K_UP:
+                if player.alive == True and gamestart == True:
+                    player.changeyspeed(5)
+                    player.ymove == False
+            elif event.key == pygame.K_DOWN:
+                if player.alive == True and gamestart == True:
+                    player.changeyspeed(-5)
+                    player.ymove == False
             elif event.key == pygame.K_a:
                 if player2.alive == True and gamestart == True:
                     player2.changespeed(5)
@@ -335,6 +345,16 @@ while True:
                                                 
     for upgrade in upgrades: #ends the powerups
         upgrade.powerdown(player,ball,balls)
+
+    for upgrade in upgrades:
+        upgrade.powerdown(player2,ball,balls)
+
+
+    for ladder in ladders:
+        hits = pygame.sprite.spritecollide(player, ladders, False)
+        for ladder in hits:
+            player.ladder = True
+
 
     #spawning                
     if globaltimer < 3600:

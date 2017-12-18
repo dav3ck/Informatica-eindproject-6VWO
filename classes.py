@@ -240,9 +240,15 @@ class Player(parent):
         self.deathtimer = 0
         self.lives = 6
         self.ladder = False
+        self.yspeed = 3
+        self.ymove = False
 
     def changespeed(self,x):
         self.xspeed += x
+
+    def changeyspeed(self,y):
+        self.yspeed += y
+        self.ymove = True
 
 
     def reload(self):
@@ -296,12 +302,24 @@ class Player(parent):
         if self.ittnum > 5:
             self.ittnum = 0
 
-
-
         self.rect = self.image.get_rect()
 
         self.xcord += (self.xspeed * (self.reducer * self.reducerup)) #basic player movement
+
+        if self.ladder == True and self.yspeed == 3:
+            self.yspeed = 0
+
         self.ycord += self.yspeed
+
+            
+        if self.ycord > 752:
+            self.ycord = 752
+
+        if self.ymove == False:
+            self.yspeed = 3
+
+        self.ladder = False
+        
         self.rect.x = self.xcord
         self.rect.y = self.ycord
 
@@ -309,6 +327,7 @@ class Player(parent):
         self.ittnumtimer += 1
         if self.deathtimer > 0:
             self.deathtimer += 1
+            
 
 class Player2(parent):
     def __init__(self,x,y):
@@ -336,6 +355,8 @@ class Player2(parent):
         players.add(self)
         self.deathtimer = 0
         self.ladder = False
+        self.weight = 0.7
+        self.yspeed = 0
 
     def changespeed(self,x):
         self.xspeed += x
@@ -397,7 +418,11 @@ class Player2(parent):
         self.rect = self.image.get_rect()
 
         self.xcord += (self.xspeed * (self.reducer * self.reducerup)) #basic player movement
+
+        self.yspeed += self.weight
         self.ycord += self.yspeed
+        self.weight = 0.7
+
         self.rect.x = self.xcord
         self.rect.y = self.ycord
 
