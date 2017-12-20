@@ -457,6 +457,8 @@ class Bullet(parent):
         self.rect.x = self.xcord
         if self.ycord < -10:
             pygame.sprite.Sprite.kill(self)
+        if self.ycord > 820:
+            self.yspeed = 0
 
 class Floor(parent):
     def __init__(self):
@@ -698,7 +700,7 @@ class Highscore2(parent):
         if self.ycord < -1000:
             pygame.sprite.Sprite.kill(self)
             highscore2 = Highscore2()
-class Block(parent):
+'''class Block(parent):
     def __init__(self, row, colum, xsize, ysize, color):
         super().__init__()
         self.row = row
@@ -708,7 +710,7 @@ class Block(parent):
         self.color = color
         self.image = pygame.Surface([self.xsize,self.ysize])
         self.image.fill(self.color)
-        self.rect = self.image.get_rect()
+        self.rect = self.image.get_rect()'''
 
 class Ladder(parent):
     def __init__(self):
@@ -726,10 +728,28 @@ class Block(parent):
     def __init__(self):
         super().__init__()
         self.xcord = 500
-        self.ycord = 800
+        self.ycord = 700
+        self.xspeed = 3
+        self.yspeed = 0
+        self.xleft = 400
+        self.xright = 600
+        self.yup = 100
+        self.ydown = 200
+        self.breakable = False
         self.image = pygame.Surface([40,40])
         self.image.fill(black)
         self.rect = self.image.get_rect()
         self.rect.y = self.ycord
         self.rect.x = self.xcord
         blocks.add(self)
+
+    def update(self):
+        self.xcord += self.xspeed
+        self.ycord += self.yspeed
+        if self.xcord < self.xleft or self.xcord > self.xright:
+            self.xspeed *= -1
+        if self.ycord < self.yup or self.ycord > self.ydown:
+            self.yspeed *= -1
+        self.rect = self.image.get_rect()
+        self.rect.y = self.ycord
+        self.rect.x = self.xcord

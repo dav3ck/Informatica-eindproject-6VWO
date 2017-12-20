@@ -354,19 +354,51 @@ while True:
         for ladder in hits:
             player.ladder = True
 
-    for block in blocks:
-        hits = pygame.sprite.spritecollide(player, blocks, False)
-        for block in hits:
-            if player.ycord < (block.ycord + 40) and player.ycord > (block.ycord - 84): #left right collisions
-                if player.xcord < (block.xcord + 40) and player.xcord > (block.xcord + 20): #player colliding from right
-                    player.xcord = block.xcord + 40
-                elif player.xcord > (block.xcord - 56) and player.xcord < (block.xcord + 20): #player colliding from left            
-                    player.xcord = block.xcord - 56
-            if player.xcord < (block.xcord + 40) or player.xcord > (block.xcord - 56): #up down collisions
-                if player.ycord < (block.ycord + 40) and player.ycord > (block.ycord + 20): #player colliding from down
-                    player.ycord = block.ycord + 40
-                elif player.ycord > (block.ycord - 84) and player.ycord < (block.ycord + 20): #player colliding from up            
-                    player.ycord = block.ycord - 84                
+    def blockhit(player):
+        for block in blocks:
+            hits = pygame.sprite.spritecollide(player, blocks, False)
+            for block in hits:
+                if player == bullet and block.breakable == True:
+                    pygame.sprite.Sprite.kill(block)
+                    pygame.sprite.Sprite.kill(player)
+                if player == bullet:
+                    player.yspeed = -5
+                if player != ball:
+                    if player.ycord < (block.ycord) and player.ycord > (block.ycord - 70): #left right collisions
+                        if player.xcord < (block.xcord + 40) and player.xcord > (block.xcord + 20): #player colliding from right
+                            player.xcord = block.xcord + 40
+                        elif player.xcord > (block.xcord - 56) and player.xcord < (block.xcord + 20): #player colliding from left            
+                            player.xcord = block.xcord - 56
+                    elif player.xcord < (block.xcord + 40) or player.xcord > (block.xcord - 56): #up down collisions
+                        if player.ycord < (block.ycord + 40) and player.ycord > (block.ycord + 20): #player colliding from down
+                            player.ycord = block.ycord + 40
+                        elif player.ycord > (block.ycord - 84) and player.ycord < (block.ycord + 20): #player colliding from up            
+                            player.ycord = block.ycord - 84
+                else:
+                    if player.ycord < (block.ycord) and player.ycord > (block.ycord - 70): #left right collisions
+                        if player.xcord < (block.xcord + 40) and player.xcord > (block.xcord + 20): #player colliding from right
+                            player.xspeed *= -1
+                        elif player.xcord > (block.xcord - 56) and player.xcord < (block.xcord + 20): #player colliding from left            
+                            player.xspeed *= -1
+                    elif player.xcord < (block.xcord + 40) or player.xcord > (block.xcord - 56): #up down collisions
+                        if player.ycord < (block.ycord + 40) and player.ycord > (block.ycord + 20): #player colliding from down
+                            player.ycord = block.ycord + 40
+                        elif player.ycord > (block.ycord - 84) and player.ycord < (block.ycord + 20): #player colliding from up            
+                            player.ycord = block.ycord - 84
+                            if player == ball:
+                                if ball.typenum == 0:
+                                    ball.yspeed = 0
+                                    ball.xspeed /= 10000
+                                    ball.weight /= 10000
+                                    ball.typenum = 1
+                                    ball.ittnum = -1
+
+    blockhit(player)
+    blockhit(player2)
+    for ball in balls:
+        blockhit(ball)
+    for bullet in bullets:
+        blockhit(bullet)
 
     #spawning                
     if globaltimer < 3600:
