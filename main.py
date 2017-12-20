@@ -27,8 +27,6 @@ highscore = Highscore()
 
 highscore2 = Highscore2()
 
-ladder = Ladder()
-
 playernum = 1
 
 
@@ -44,6 +42,7 @@ pygame.mouse.set_visible(0) #Removed mouse
 
 player = Player(600,800) #creates the player
 player2 = Player2(680,752)
+block = Block()
 
 #creates play envoirment 
 floor = Floor()
@@ -355,6 +354,19 @@ while True:
         for ladder in hits:
             player.ladder = True
 
+    for block in blocks:
+        hits = pygame.sprite.spritecollide(player, blocks, False)
+        for block in hits:
+            if player.ycord < (block.ycord + 40) and player.ycord > (block.ycord - 84): #left right collisions
+                if player.xcord < (block.xcord + 40) and player.xcord > (block.xcord + 20): #player colliding from right
+                    player.xcord = block.xcord + 40
+                elif player.xcord > (block.xcord - 56) and player.xcord < (block.xcord + 20): #player colliding from left            
+                    player.xcord = block.xcord - 56
+            if player.xcord < (block.xcord + 40) or player.xcord > (block.xcord - 56): #up down collisions
+                if player.ycord < (block.ycord + 40) and player.ycord > (block.ycord + 20): #player colliding from down
+                    player.ycord = block.ycord + 40
+                elif player.ycord > (block.ycord - 84) and player.ycord < (block.ycord + 20): #player colliding from up            
+                    player.ycord = block.ycord - 84                
 
     #spawning                
     if globaltimer < 3600:

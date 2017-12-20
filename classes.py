@@ -17,6 +17,7 @@ floors = pygame.sprite.Group()
 letters = pygame.sprite.Group()
 keyboards = pygame.sprite.Group()
 ladders = pygame.sprite.Group()
+blocks = pygame.sprite.Group()
 
 
 #highscores
@@ -720,3 +721,15 @@ class Ladder(parent):
         self.rect.y = self.ycord
         self.rect.x = self.xcord
         ladders.add(self)
+
+class Block(parent):
+    def __init__(self):
+        super().__init__()
+        self.xcord = 500
+        self.ycord = 800
+        self.image = pygame.Surface([40,40])
+        self.image.fill(black)
+        self.rect = self.image.get_rect()
+        self.rect.y = self.ycord
+        self.rect.x = self.xcord
+        blocks.add(self)
