@@ -82,6 +82,8 @@ def maingame(gametype):
 
     gamestart = False
 
+    ladder = Ladder()
+
     highscore = Highscore()
     highscores = []
     with open('highscores.txt', 'r') as r:
@@ -102,7 +104,7 @@ def maingame(gametype):
         wall = Wall(0) #left wall
         wall = Wall(1275) #right wall
         player = Player(600,800) #creates the player
-        player2 = Player2(680,752)
+        player2 = Player2(600,800)
         flashart = Flashart("Sprites/Extra/Flash.png", 0, 0)
     pygame.mixer.music.load("Theme.wav")
 
@@ -410,6 +412,7 @@ def maingame(gametype):
             hits = pygame.sprite.spritecollide(player, ladders, False)
             for ladder in hits:
                 player.ladder = True
+                player.ladderonce = 0
 
         def blockhit(player):
             for block in blocks:

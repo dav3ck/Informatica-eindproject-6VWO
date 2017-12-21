@@ -243,13 +243,124 @@ class Player(parent):
         self.ladder = False
         self.yspeed = 3
         self.ymove = False
+        self.ladderonce = 0
 
     def changespeed(self,x):
         self.xspeed += x
 
     def changeyspeed(self,y):
-        self.yspeed += y
-        self.ymove = True
+        if self.ladder == True:
+            self.yspeed += y
+            self.ymove = True
+
+
+    def reload(self):
+        self.ammo = 0
+        print("reloading")
+
+    def update(self):
+        if self.immune == True:
+            self.immunetimer += 1
+            self.immune1 = 1
+            if self.immunetimer > 120:
+                self.immune = False
+                self.immunetimer = 0
+
+        else:
+            self.immune1 = 0
+
+        if self.alive == False:
+            self.xspeed = 0
+            self.yspeed = 0
+            self.once += 1
+
+
+        if self.shooter == True and self.timer % 5 == 0:
+            bullet = Bullet(self.xcord, self.ycord)
+
+
+        if self.alive == False:
+            self.image = pygame.image.load("Sprites/Extra/Death.png")
+        elif self.fire == True and self.xspeed == 0:
+            self.firetimer += 1
+            self.image = pygame.image.load(playeranimation[0][self.immune1][1])
+            if self.firetimer > 16:
+                self.firetimer = 0
+                self.fire = False
+        elif self.xspeed > 0:
+            self.fire = False
+            self.image = pygame.image.load(playeranimation[1][self.immune1][self.ittnum])
+            if self.ittnumtimer % 5 == 0:
+                self.ittnum += 1
+        elif self.xspeed < 0:
+            self.fire = False
+            self.image = pygame.image.load(playeranimation[2][self.immune1][self.ittnum])
+            if self.ittnumtimer % 5 == 0:
+                self.ittnum += 1
+        else:
+            self.image = pygame.image.load(playeranimation[0][self.immune1][0])
+            self.ittnum = 0
+            self.ittnumtimer = 0
+
+        if self.ittnum > 5:
+            self.ittnum = 0
+
+        self.rect = self.image.get_rect()
+
+        self.xcord += (self.xspeed * (self.reducer * self.reducerup)) #basic player movement
+
+
+        self.ycord += self.yspeed
+
+            
+        if self.ycord > 752:
+            self.ycord = 752
+            
+        if self.ladderonce > 1:
+            self.ladder = False
+
+        self.ladderonce += 1
+
+        self.rect.x = self.xcord
+        self.rect.y = self.ycord
+
+        self.timer += 1
+        self.ittnumtimer += 1
+        if self.deathtimer > 0:
+            self.deathtimer += 1
+            
+
+class Player2(parent):
+    def __init__(self,x,y):
+        super().__init__()
+        self.reducer = 1
+        self.reducerup = 1
+        self.xcord = 640 #x coördinate
+        self.ycord = 752 #y coördinate
+        self.ammo = 10
+        self.killcount = 0
+        self.timer = 0
+        self.ammotimer = 0
+        self.immune = True
+        self.immunetimer = 100
+        self.alive = True
+        self.once = 0 #this is there to make sure it only adds score once, remove this with menues and such
+        self.image = pygame.image.load(playeranimation[0][0][0])
+        self.rect = self.image.get_rect()
+        self.shooter = False # auto shooter
+        self.fire = False #kijkt of player schiet
+        self.firetimer = 0
+        self.ittnum = 0
+        self.ittnumtimer = 0
+        self.immune1 = 1 #1 of 0 waarde als iets immune is
+        players.add(self)
+        self.deathtimer = 0
+        self.ladder = False
+        self.yspeed = 0
+        self.ymove = False
+
+    def changespeed(self,x):
+        self.xspeed += x
 
 
     def reload(self):
@@ -328,109 +439,7 @@ class Player(parent):
         self.ittnumtimer += 1
         if self.deathtimer > 0:
             self.deathtimer += 1
-            
 
-class Player2(parent):
-    def __init__(self,x,y):
-        super().__init__()
-        self.reducer = 1
-        self.reducerup = 1
-        self.xcord = 640 #x coördinate
-        self.ycord = 752 #y coördinate
-        self.ammo = 10
-        self.killcount = 0
-        self.timer = 0
-        self.ammotimer = 0
-        self.immune = True
-        self.immunetimer = 100
-        self.alive = True
-        self.once = 0 #this is there to make sure it only adds score once, remove this with menues and such
-        self.image = pygame.image.load(playeranimation[0][0][0])
-        self.rect = self.image.get_rect()
-        self.shooter = False # auto shooter
-        self.fire = False #kijkt of player schiet
-        self.firetimer = 0
-        self.ittnum = 0
-        self.ittnumtimer = 0
-        self.immune1 = 1 #1 of 0 waarde als iets immune is
-        players.add(self)
-        self.deathtimer = 0
-        self.ladder = False
-        self.weight = 0.7
-        self.yspeed = 0
-
-    def changespeed(self,x):
-        self.xspeed += x
-
-
-    def reload(self):
-        self.ammo = 0
-        print("reloading")
-
-    def update(self):
-        if self.immune == True:
-            self.immunetimer += 1
-            self.immune1 = 1
-            if self.immunetimer > 120:
-                self.immune = False
-                self.immunetimer = 0
-
-        else:
-            self.immune1 = 0
-
-        if self.alive == False:
-            self.xspeed = 0
-            self.yspeed = 0
-            self.once += 1
-
-
-        if self.shooter == True and self.timer % 5 == 0:
-            bullet = Bullet(self.xcord, self.ycord)
-
-
-        if self.alive == False:
-            self.image = pygame.image.load("Sprites/Extra/Death.png")
-        elif self.fire == True and self.xspeed == 0:
-            self.firetimer += 1
-            self.image = pygame.image.load(playeranimation[0][self.immune1][1])
-            if self.firetimer > 16:
-                self.firetimer = 0
-                self.fire = False
-        elif self.xspeed > 0:
-            self.fire = False
-            self.image = pygame.image.load(playeranimation[1][self.immune1][self.ittnum])
-            if self.ittnumtimer % 5 == 0:
-                self.ittnum += 1
-        elif self.xspeed < 0:
-            self.fire = False
-            self.image = pygame.image.load(playeranimation[2][self.immune1][self.ittnum])
-            if self.ittnumtimer % 5 == 0:
-                self.ittnum += 1
-        else:
-            self.image = pygame.image.load(playeranimation[0][self.immune1][0])
-            self.ittnum = 0
-            self.ittnumtimer = 0
-
-        if self.ittnum > 5:
-            self.ittnum = 0
-
-
-
-        self.rect = self.image.get_rect()
-
-        self.xcord += (self.xspeed * (self.reducer * self.reducerup)) #basic player movement
-
-        self.yspeed += self.weight
-        self.ycord += self.yspeed
-        self.weight = 0.7
-
-        self.rect.x = self.xcord
-        self.rect.y = self.ycord
-
-        self.timer += 1
-        self.ittnumtimer += 1
-        if self.deathtimer > 0:
-            self.deathtimer += 1
 
 
 

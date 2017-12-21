@@ -31,7 +31,7 @@ pygame.mixer.music.load("Theme.wav")
 #pygame.mixer.music.play(loops=-1, start=0.0)
 
 #Arcade
-#Campaigh
+#Campaign
 #Level
 #LevelEditor
 #Settings
