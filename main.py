@@ -250,11 +250,11 @@ def maingame(gametype):
                 elif event.key == pygame.K_UP:
                     if player.alive == True and gamestart == True:
                         player.changeyspeed(5)
-                        player.ymove == False
+                        player.ymove = False
                 elif event.key == pygame.K_DOWN:
                     if player.alive == True and gamestart == True:
                         player.changeyspeed(-5)
-                        player.ymove == False
+                        player.ymove = False
                 elif event.key == pygame.K_a:
                     if player2.alive == True and gamestart == True:
                         player2.changespeed(5)

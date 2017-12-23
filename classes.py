@@ -251,12 +251,11 @@ class Player(parent):
     def changeyspeed(self,y):
         if self.ladder == True:
             self.yspeed += y
-            self.ymove = True
+            self.ymove = True    
 
 
     def reload(self):
         self.ammo = 0
-        print("reloading")
 
     def update(self):
         if self.immune == True:
@@ -316,7 +315,7 @@ class Player(parent):
         if self.ycord > 752:
             self.ycord = 752
             
-        if self.ladderonce > 1:
+        if self.ladderonce > 1 and self.ladder == True:
             self.ladder = False
 
         if self.ladder == False and self.yspeed > 3 and self.ymove == True:
@@ -326,10 +325,13 @@ class Player(parent):
         elif self.ladder == True and self.yspeed == 3 and self.ymove == True:
             self.yspeed -= 5
         elif self.ladder == True and self.yspeed == 3 and self.ymove == False:
-            self.yspeed += 5
+            self.yspeed = 0
+
+        if self.ladder == False:
+            self.yspeed = 3
 
         
-
+        print(self.yspeed)
         self.ladderonce += 1
 
         self.rect.x = self.xcord
@@ -376,7 +378,6 @@ class Player2(parent):
 
     def reload(self):
         self.ammo = 0
-        print("reloading")
 
     def update(self):
         if self.immune == True:
