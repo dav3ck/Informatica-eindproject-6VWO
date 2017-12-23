@@ -319,6 +319,17 @@ class Player(parent):
         if self.ladderonce > 1:
             self.ladder = False
 
+        if self.ladder == False and self.yspeed > 3 and self.ymove == True:
+            self.yspeed -= 5
+        elif self.ladder == False and self.yspeed < 3 and self.ymove == True:
+            self.yspeed += 5
+        elif self.ladder == True and self.yspeed == 3 and self.ymove == True:
+            self.yspeed -= 5
+        elif self.ladder == True and self.yspeed == 3 and self.ymove == False:
+            self.yspeed += 5
+
+        
+
         self.ladderonce += 1
 
         self.rect.x = self.xcord
