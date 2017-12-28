@@ -110,6 +110,16 @@ def maingame(gametype):
 
     background = pygame.image.load('Sprites/Extra/Background.png').convert()
 
+    Grunt = pygame.mixer.Sound("Sounds/Grunt-3.wav")
+    Keypress = pygame.mixer.Sound("Sounds/Keyboard-sound.wav")
+    Plop = pygame.mixer.Sound("Sounds/Plop-sound.wav")
+    Reload = pygame.mixer.Sound("Sounds/Reloading.wav")
+    Schuiffluit = pygame.mixer.Sound("Sounds/Schuiffluit-goed.wav")
+    Shot = pygame.mixer.Sound("Sounds/Shot goed.wav")
+    Splat = pygame.mixer.Sound("Sounds/Slime-splat.wav")
+    Deaththeme = pygame.mixer.Sound("Sounds/Ukulile-G-minor-down.wav")
+    
+
     run = 1
              
     while run == 1:
@@ -147,11 +157,13 @@ def maingame(gametype):
                             player.lives = 3
                     if player2.alive == True and playernum == 2:
                         if player2.ammo > 0 and spawntimer > 0:
+                            Shot.play()
                             bullet = Bullet(player2.xcord,player2.ycord)
                             player2.ammo -= 1
                             player2.fire = True
                 elif event.key == pygame.K_RETURN:
                     if len(keyboards) == 1:
+                        Keypress.play()
                         if textbox.ittnum < 5:
                             if (keyboard.capital == False and keyboard.num < 38): 
                                 keyboard.name = keyboard.name + keyboard.alphabet[keyboard.num] #adds letter to list with name
@@ -214,6 +226,7 @@ def maingame(gametype):
                 elif event.key == pygame.K_KP0:
                     if player.alive == True:
                         if player.ammo > 0 and spawntimer > 0:
+                            Shot.play()
                             bullet = Bullet(player.xcord,player.ycord)
                             player.ammo -= 1
                             player.fire = True
@@ -299,19 +312,25 @@ def maingame(gametype):
         if player.alive == False and player.once == 1:
             flashart = Flashart("Sprites/Extra/GameOver.png", 414 , 50)
             player.deathtimer = 1
+            Deaththeme.play()
 
         if player.alive == False and player.deathtimer > 180 and len(keyboards) == 0: #Dit load na 3 seconde textbox in
             keyboard = Keyboard()
             textbox = Textbox()
             
         if player.ammo == 0: #reload mechanics
+            Reload.play()
+            Reload.set_volume(0.2)
             player.reducer = 0.5
             player.ammotimer += 1
             if player.ammotimer == 120:
                 player.ammo = 10
                 player.reducer = 1
-                player.ammotimer = 0    
+                player.ammotimer = 0
+
         if player2.ammo == 0: #reload mechanics
+            Reload.play()
+            Reload.set_volume(0.2)
             player2.reducer = 0.5
             player2.ammotimer += 1
             if player2.ammotimer == 120:
@@ -326,6 +345,7 @@ def maingame(gametype):
         for ball in balls:
             hits = pygame.sprite.spritecollide(player, balls, False) #ball on player colisions
             for ball in hits:
+                Grunt.play()
                 if ball.typenum == 0:
                     ball.yspeed = 9.5
                 if player.immune == False:
@@ -336,6 +356,7 @@ def maingame(gametype):
             if globaltimer >= 1 and playernum == 2:
                 hits = pygame.sprite.spritecollide(player2, balls, False) #ball on player colisions
                 for ball in hits:
+                    Grunt.play()
                     if ball.typenum == 0:
                         ball.yspeed = 9.5
                     if player2.immune == False:
@@ -345,6 +366,7 @@ def maingame(gametype):
         for bullet in bullets:
             hits = pygame.sprite.spritecollide(bullet, balls, True) #bullet on ball collisions
             for ball in hits:
+                Plop.play()
                 if ball.ycord > 50:
                     pygame.sprite.Sprite.kill(bullet)
                     if ball.check == 1:
@@ -362,6 +384,7 @@ def maingame(gametype):
             hits = pygame.sprite.spritecollide(floor, balls, False)
             for ball in hits:
                 if ball.typenum == 0:
+                    Splat.play()
                     ball.yspeed = 0
                     ball.xspeed /= 10000
                     ball.weight /= 10000
@@ -398,6 +421,7 @@ def maingame(gametype):
         for upgrade in upgrades: #runs the powerups
             hits = pygame.sprite.spritecollide(player, upgrades, False)
             for upgrade in hits:
+                Schuiffluit.play()
                 upgrade.yspeed = 0
                 upgrade.powerup(player,ball,balls,player)
                 player.killcount += 0.5
@@ -405,6 +429,7 @@ def maingame(gametype):
         for upgrade in upgrades: #runs the powerups
             hits = pygame.sprite.spritecollide(player2, upgrades, False)
             for upgrade in hits:
+                Schuiffluit.play()
                 upgrade.yspeed = 0
                 upgrade.powerup(player2,ball,balls,player)
                 player.killcount += 0.5
@@ -513,8 +538,10 @@ def maingame(gametype):
         screen.blit(scoretext,(880,950))
         screen.blit(ammotext, (380, 950))
         screen.blit(lifetext, (205, 950))
-        screen.blit(playertext, (10, 10))
-        screen.blit(ammotext2, (500, 950))
+        if gamestart == False:
+            screen.blit(playertext, (10, 10))
+        if playernum == 2:
+            screen.blit(ammotext2, (500, 950))
         
         if player.alive == False and player.once > 2:
             globaltimer = 0
