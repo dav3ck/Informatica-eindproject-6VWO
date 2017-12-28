@@ -232,6 +232,7 @@ class Player(parent):
         self.image = pygame.image.load(playeranimation[0][0][0])
         self.rect = self.image.get_rect()
         self.shooter = False # auto shooter
+        self.shootertimer = 0
         self.fire = False #kijkt of player schiet
         self.firetimer = 0
         self.ittnum = 0
@@ -276,6 +277,11 @@ class Player(parent):
 
         if self.shooter == True and self.timer % 5 == 0:
             bullet = Bullet(self.xcord, self.ycord)
+            self.shootertimer += 1
+            if self.shootertimer > 600:
+                self.shootertimer = 0
+                self.shooter = False
+
 
 
         if self.alive == False:
@@ -330,8 +336,6 @@ class Player(parent):
         if self.ladder == False:
             self.yspeed = 3
 
-        
-        print(self.yspeed)
         self.ladderonce += 1
 
         self.rect.x = self.xcord
@@ -354,26 +358,34 @@ class Player2(parent):
         self.killcount = 0
         self.timer = 0
         self.ammotimer = 0
-        self.immune = True
-        self.immunetimer = 100
+        self.immune = False
+        self.immunetimer = 0
         self.alive = True
         self.once = 0 #this is there to make sure it only adds score once, remove this with menues and such
         self.image = pygame.image.load(playeranimation[0][0][0])
         self.rect = self.image.get_rect()
         self.shooter = False # auto shooter
+        self.shootertimer = 0
         self.fire = False #kijkt of player schiet
         self.firetimer = 0
         self.ittnum = 0
         self.ittnumtimer = 0
-        self.immune1 = 1 #1 of 0 waarde als iets immune is
+        self.immune1 = 0 #1 of 0 waarde als iets immune is
         players.add(self)
         self.deathtimer = 0
+        self.lives = 6
         self.ladder = False
-        self.yspeed = 0
+        self.yspeed = 3
         self.ymove = False
+        self.ladderonce = 0
 
     def changespeed(self,x):
         self.xspeed += x
+
+    def changeyspeed(self,y):
+        if self.ladder == True:
+            self.yspeed += y
+            self.ymove = True    
 
 
     def reload(self):
@@ -398,6 +410,11 @@ class Player2(parent):
 
         if self.shooter == True and self.timer % 5 == 0:
             bullet = Bullet(self.xcord, self.ycord)
+            self.shootertimer += 1
+            if self.shootertimer > 600:
+                self.shootertimer = 0
+                self.shooter = False
+
 
 
         if self.alive == False:
@@ -430,20 +447,30 @@ class Player2(parent):
 
         self.xcord += (self.xspeed * (self.reducer * self.reducerup)) #basic player movement
 
-        if self.ladder == True and self.yspeed == 3:
-            self.yspeed = 0
 
         self.ycord += self.yspeed
 
             
         if self.ycord > 752:
             self.ycord = 752
+            
+        if self.ladderonce > 1 and self.ladder == True:
+            self.ladder = False
 
-        if self.ymove == False:
+        if self.ladder == False and self.yspeed > 3 and self.ymove == True:
+            self.yspeed -= 5
+        elif self.ladder == False and self.yspeed < 3 and self.ymove == True:
+            self.yspeed += 5
+        elif self.ladder == True and self.yspeed == 3 and self.ymove == True:
+            self.yspeed -= 5
+        elif self.ladder == True and self.yspeed == 3 and self.ymove == False:
+            self.yspeed = 0
+
+        if self.ladder == False:
             self.yspeed = 3
 
-        self.ladder = False
-        
+        self.ladderonce += 1
+
         self.rect.x = self.xcord
         self.rect.y = self.ycord
 

@@ -226,11 +226,11 @@ def maingame(gametype):
                     if player2.alive == True and gamestart == True:
                         player2.changespeed(5)
                 elif event.key == pygame.K_w:
-                    if player2.alive == True:
-                        print("there seems to be nothing here...")
+                    if player.alive == True:
+                        player2.changeyspeed(-5)
                 elif event.key == pygame.K_s:
                     if player2.alive == True:
-                        print("there seems to be nothing here...")
+                        player2.changeyspeed(5)
                 elif event.key == pygame.K_p and gamestart == False:
                     if playernum == 1:
                         playernum = 2
@@ -261,6 +261,14 @@ def maingame(gametype):
                 elif event.key == pygame.K_d:
                     if player2.alive == True and gamestart == True:
                         player2.changespeed(-5)
+                elif event.key == pygame.K_w:
+                    if player2.alive == True and gamestart == True:
+                        player2.changeyspeed(5)
+                        player2.ymove = False
+                elif event.key == pygame.K_s:
+                    if player2.alive == True and gamestart == True:
+                        player2.changeyspeed(-5)
+                        player2.ymove = False
             
 
         #GUI text
@@ -413,6 +421,12 @@ def maingame(gametype):
             for ladder in hits:
                 player.ladder = True
                 player.ladderonce = 0
+
+        for ladder in ladders:
+            hits = pygame.sprite.spritecollide(player2, ladders, False)
+            for ladder in hits:
+                player2.ladder = True
+                player2.ladderonce = 0        
 
         def blockhit(player):
             for block in blocks:
