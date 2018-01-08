@@ -7,6 +7,9 @@ from Leveleditor import *
 
 black = (0, 0, 0) #defines the colour black
 white = (255,255,255)
+red = (255, 0, 0)
+
+color = [white,white,white,white,white]
 
 withd = 1280 #Breedte van scherm
 height = 1024 #Hoogte van scherm
@@ -43,7 +46,7 @@ def choice (windownum):
     elif windownum == 1:
         editor()
     elif windownum == 2:
-        print("ok")
+        maingame("Level")
     elif windownum == 3:
         print("ok")
     elif windownum == 4:
@@ -67,5 +70,24 @@ while True:
     elif windownum > 4:
         windownum = 0
 
+    color = [white,white,white,white,white]
+    color[windownum] = red
+
     screen.fill(black)
+
+    option0 = myfont.render("Arcade", False, color[0])
+    option1 = myfont.render("Leveleditor", False, color[1])
+    option2 = myfont.render("Levels", False, color[2])
+    option3 = myfont.render("Campaign(not yet implemented)", False, color[3])
+    option4 = myfont.render("Controls(not yet implemented)", False, color[4])
+
+    screen.blit(option0, (500, 300))
+    screen.blit(option1, (500, 400))
+    screen.blit(option2, (500, 500))
+    screen.blit(option3, (500, 600))
+    screen.blit(option4, (500, 700))
+    
+    pygame.display.flip()
+
+    clock.tick(60)
                 

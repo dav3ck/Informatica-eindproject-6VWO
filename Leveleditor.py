@@ -320,9 +320,7 @@ curser = Curser()
 #Echte spel
 
 def editor():
-    everything = pygame.sprite.Group() #list that will hold everything
-    blocks = pygame.sprite.Group()
-    popups = pygame.sprite.Group()
+
     font = pygame.font.Font(None, 32)
     
     run = 1
@@ -430,12 +428,14 @@ def editor():
                             for block in blocks:
                                 if block.colum == curser.colum and block.row == curser.row:
                                     pygame.sprite.Sprite.kill(block)
+                                    print("hi")
                         else:
                             for block in blocks:
                                 if block.colum == movingblockcord + 1:
                                     pygame.sprite.Sprite.kill(block)
                             curser.colum += 1
                             keyboard = 0
+                            print("Bye")
                     elif event.key == pygame.K_SPACE:
                         block = Block(curser.xsize, curser.ysize, curser.color, curser.row, curser.colum)
                         writearray(curser.blockvalue, curser.row, curser.colum)

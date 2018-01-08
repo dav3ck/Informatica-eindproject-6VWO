@@ -176,8 +176,7 @@ class Ball(parent):
 
 
     def update(self):
-        if self.freeze == False:
-            self.xcord += self.xspeed #handles ball horizontal movement
+        
 
         self.timer += 1
         if self.timer > 30 and self.typenum == 0:
@@ -195,8 +194,10 @@ class Ball(parent):
                 self.ittnum = -1
                 self.typenum = 0
 
-        self.yspeed -= self.weight #handles ball bouncing
-        self.ycord -= self.yspeed
+        if self.freeze == False:
+            self.yspeed -= self.weight #handles ball bouncing
+            self.ycord -= self.yspeed
+            self.xcord += self.xspeed #handles ball horizontal movement
 
         self.image = pygame.image.load(ballanimation[self.sizenum][self.typenum][0][self.ittnum])
         self.rect = self.image.get_rect()
@@ -748,7 +749,7 @@ class Highscore2(parent):
         if self.ycord < -1000:
             pygame.sprite.Sprite.kill(self)
             highscore2 = Highscore2()
-'''class Block(parent):
+class Block1(parent):
     def __init__(self, row, colum, xsize, ysize, color):
         super().__init__()
         self.row = row
@@ -758,7 +759,7 @@ class Highscore2(parent):
         self.color = color
         self.image = pygame.Surface([self.xsize,self.ysize])
         self.image.fill(self.color)
-        self.rect = self.image.get_rect()'''
+        self.rect = self.image.get_rect()
 
 class Ladder(parent):
     def __init__(self):

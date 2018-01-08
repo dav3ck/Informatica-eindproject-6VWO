@@ -5,6 +5,7 @@ import math
 import random
 pygame.init()
 from classes import * #imports all from classes, removes the need for "classes."prepend
+from Levelreader import *
 '''
 black = (0, 0, 0) #defines the colour black
 white = (255,255,255)
@@ -99,13 +100,26 @@ def maingame(gametype):
     
 
     playernum = 1
+
+     #loading in level
+    
+    floor = Floor()
+    wall = Wall(0) #left wall
+    wall = Wall(1275) #right wall
+    
+    
     if gametype == "arcade":
-        floor = Floor()
-        wall = Wall(0) #left wall
-        wall = Wall(1275) #right wall
         player = Player(600,800) #creates the player
         player2 = Player2(600,800)
-        flashart = Flashart("Sprites/Extra/Flash.png", 0, 0)
+    elif gametype == "Level":
+        playercords = levelreader()
+        player = Player(playercords[0][0], playercords[0][1])
+        player2 = Player2(playercords[1][0], playercords[1][1])
+            
+    flashart = Flashart("Sprites/Extra/Flash.png", 0, 0)
+
+    
+    
     pygame.mixer.music.load("Theme.wav")
 
     background = pygame.image.load('Sprites/Extra/Background.png').convert()
@@ -149,8 +163,11 @@ def maingame(gametype):
                         keyboard.num += 10
                 elif event.key == pygame.K_SPACE: #shoot button
                     if gamestart == False:
+                        for ball in balls:
+                            ball.freeze = False
                         gamestart = True
-                        ball = Ball(1,500,70, False)
+                        if gametype == "arcade":
+                            ball = Ball(1,500,70, False)
                         pygame.sprite.Sprite.kill(flashart)
                         if playernum == 1:
                             pygame.sprite.Sprite.kill(player2)
@@ -314,9 +331,11 @@ def maingame(gametype):
             player.deathtimer = 1
             Deaththeme.play()
 
-        if player.alive == False and player.deathtimer > 180 and len(keyboards) == 0: #Dit load na 3 seconde textbox in
+        if player.alive == False and player.deathtimer > 180 and len(keyboards) == 0 and gametype == "arcade": #Dit load na 3 seconde textbox in
             keyboard = Keyboard()
             textbox = Textbox()
+        elif gametype == "Level" and player.alive == False and player.deathtimer > 180:
+            run = 0
             
         if player.ammo == 0: #reload mechanics
             Reload.play()
@@ -499,21 +518,27 @@ def maingame(gametype):
         for bullet in bullets:
             blockhit(bullet)
 
-        #spawning                
-        if globaltimer < 3600:
-            spawninterval = int(-1 / 14400 * math.pow(globaltimer, 2) + 1800)
-        else:
-            spawninterval = 900
-
-        if ((player.killcount > 12 and len(balls) < 2) or spawntimer == spawninterval): #auto spawns balls
-            ball = Ball(1,500,70,False)
-            spawntimer = 0
-
-        if globaltimer % 900 == 0: 
-            if globaltimer % 2700 == 0:
-                upgrade = Upgrade(random.randrange(3,6))
+        #spawning
+        if gametype == "arcade":
+            if globaltimer < 3600:
+                spawninterval = int(-1 / 14400 * math.pow(globaltimer, 2) + 1800)
             else:
-                upgrade = Upgrade(random.randrange(3))
+                spawninterval = 900
+
+            if ((player.killcount > 12 and len(balls) < 2) or spawntimer == spawninterval): #auto spawns balls
+                ball = Ball(1,500,70,False)
+                spawntimer = 0
+
+            if globaltimer % 900 == 0: 
+                if globaltimer % 2700 == 0:
+                    upgrade = Upgrade(random.randrange(3,6))
+                else:
+                    upgrade = Upgrade(random.randrange(3))
+
+        if gametype == "Level" and len(balls) == 0:
+            run = 0
+            
+            
 
         everything.update()
         
@@ -565,8 +590,9 @@ def maingame(gametype):
         
         #sets max fps
         clock.tick(60)
-
+    
     screen.fill(black)
+    kill()
     pygame.display.flip()
     return
 
