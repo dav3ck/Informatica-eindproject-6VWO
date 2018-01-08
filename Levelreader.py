@@ -8,6 +8,8 @@ from classes import *
 width = 1280
 height = 1024
 
+
+
     #Variable Colors
 
 black = (0, 0, 0)
@@ -46,13 +48,15 @@ wall = Wall(1275) #right wall'''
 
 
 
-with open('Levels.txt', 'r') as lines:
-    lines = lines.read()
-    lines = [line.rstrip('\n') for line in open('Levels.txt')]
-
-xline = int(len(lines) / 22)
+def readlines(file):
+    lines = []
+    with open(file, 'r') as lines:
+        lines = lines.read()
+        lines = [line.rstrip('\n') for line in open(file)]
+        return lines
 
 playercords = [[0,0],[0,0]]
+movingblockcounter = 0
 '''class parent(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -81,20 +85,29 @@ class Block(parent):
         self.rect.y = self.ycord
         self.rect.x = self.xcord'''
 
-def spawnlevel(Level, linenumber, blockvalue):
+def spawnlevel(Level, linenumber, blockvalue, lines):
+    movingblockcounter = 0
     for y in range(21):
         value = lines[y + 1 + (linenumber * 22)]
-        print(value)
         for x in range(32):
-            blockvalue = value[x]
-            spawnitems(y,x,blockvalue)
+            if value[x] == "6":
+                print(x)
+                while value[x + 1] == "b":
+                    x += 1
+                    movingblockcounter += 1
+                    
+                x = x - movingblockcounter
+                block = Block(x * 40,y * 40, movingblockcounter * 40, False)
+                movingblockcounter = 0
+            else:     
+                blockvalue = value[x]
+                spawnitems(y,x,blockvalue)
             
 
 def spawnitems(y,x, typ):
 
     y = y * 40
     x = x * 40
-    
     if typ == '1':#player
         if len(players) < 1:
             playercords[0][0] = x
@@ -106,16 +119,14 @@ def spawnitems(y,x, typ):
             playercords[1][1] = y
             #player2 = Player2(x,y)
             #print("k")
-    elif typ == '2':                                                            #ladder
-        block = Block1(y,x,1,1,black)
+    elif typ == '2':#ladder
+        ladder = Ladder(x,y)   #ladder
     elif typ == '3':                                                            #Static platform
-        block = Block1(y,x,1,1,blue)
+        block = Block(x,y,0,False)
     elif typ == '4':                                                            #Breakable platform
-        block = Block1(y,x,1,1,blue)                                             
+        block = Block(x,y,0,False)    #Wall                                          
     elif typ == '5':                                                            #vertical wall
-        block = Block1(y,x,1,1,green)                                            
-    elif typ == '6':                                                            #moving platform
-        block = Block1(y,x,1,1,white)
+        block = Block(x,y,0,True) #Breakable                                           
     elif typ == '7':                                                            #small slime
         ball = Ball(4,x,y, True)
     elif typ == '8':                                                            #medium slime
@@ -124,16 +135,23 @@ def spawnitems(y,x, typ):
         ball = Ball(1,x,y, True)
 
 
-def levelreader():
+def levelreader(file, level):
+    lines = readlines(file)
+    xline = int(len(lines) / 22)
     run = 1
-
     line = 0
-
     Level = []
     value = 0
     linenumber = 0
+    
     blockvalue = 0
     levelname = True
+
+    if file == "Campaign.txt":
+        spawnlevel(Level, level, blockvalue, lines)
+        levelname = False
+        run = 0
+        
     
     while run == 1: 
         for event in pygame.event.get(): #handles closing the window
@@ -142,13 +160,15 @@ def levelreader():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     print(Level)
-                    spawnlevel(Level, linenumber, blockvalue)
+                    spawnlevel(Level, linenumber, blockvalue, lines)
                     levelname = False
                     run = 0
                 elif event.key == pygame.K_UP:
                     linenumber += 1
                 elif event.key == pygame.K_DOWN:
                     linenumber -= 1
+                elif event.key == pygame.K_ESCAPE:
+                    run = 0
 
         if linenumber >= xline:
             linenumber = 0

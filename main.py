@@ -83,8 +83,6 @@ def maingame(gametype):
 
     gamestart = False
 
-    ladder = Ladder()
-
     highscore = Highscore()
     highscores = []
     with open('highscores.txt', 'r') as r:
@@ -112,7 +110,12 @@ def maingame(gametype):
         player = Player(600,800) #creates the player
         player2 = Player2(600,800)
     elif gametype == "Level":
-        playercords = levelreader()
+        playercords = levelreader('Levels.txt', 0)
+        player = Player(playercords[0][0], playercords[0][1])
+        player2 = Player2(playercords[1][0], playercords[1][1])
+    elif gametype == "Campaign":
+        level = 0
+        playercords = levelreader('Campaign.txt', level)
         player = Player(playercords[0][0], playercords[0][1])
         player2 = Player2(playercords[1][0], playercords[1][1])
             
@@ -262,10 +265,16 @@ def maingame(gametype):
                     if player2.alive == True:
                         player2.changeyspeed(5)
                 elif event.key == pygame.K_p and gamestart == False:
-                    if playernum == 1:
-                        playernum = 2
-                    else:
-                        playernum =1
+                    if gametype == "Level" or gametype == "arcade":
+                        if playernum == 1:
+                            playernum = 2
+                        else:
+                            playernum =1
+                    elif gametype == "Campaign" and level == 0:
+                        if playernum == 1:
+                            playernum = 2
+                        else:
+                            playernum =1
                 elif event.key == pygame.K_BACKSPACE:
                     print("Hello?")
                     run = 0
@@ -299,6 +308,8 @@ def maingame(gametype):
                     if player2.alive == True and gamestart == True:
                         player2.changeyspeed(-5)
                         player2.ymove = False
+                elif event.key == pygame.K_ESCAPE:
+                    run = 0
             
 
         #GUI text
@@ -335,6 +346,8 @@ def maingame(gametype):
             keyboard = Keyboard()
             textbox = Textbox()
         elif gametype == "Level" and player.alive == False and player.deathtimer > 180:
+            run = 0
+        elif gametype == 'Campaign' and player.alive == False and player.deathtimer > 180:
             run = 0
             
         if player.ammo == 0: #reload mechanics
@@ -476,22 +489,24 @@ def maingame(gametype):
             for block in blocks:
                 hits = pygame.sprite.spritecollide(player, blocks, False)
                 for block in hits:
-                    if player == bullet and block.breakable == True:
-                        pygame.sprite.Sprite.kill(block)
-                        pygame.sprite.Sprite.kill(player)
-                    if player == bullet:
-                        player.yspeed = -5
-                    if player != ball:
-                        if player.ycord < (block.ycord) and player.ycord > (block.ycord - 70): #left right collisions
-                            if player.xcord < (block.xcord + 40) and player.xcord > (block.xcord + 20): #player colliding from right
-                                player.xcord = block.xcord + 40
-                            elif player.xcord > (block.xcord - 56) and player.xcord < (block.xcord + 20): #player colliding from left            
-                                player.xcord = block.xcord - 56
-                        elif player.xcord < (block.xcord + 40) or player.xcord > (block.xcord - 56): #up down collisions
-                            if player.ycord < (block.ycord + 40) and player.ycord > (block.ycord + 20): #player colliding from down
-                                player.ycord = block.ycord + 40
-                            elif player.ycord > (block.ycord - 84) and player.ycord < (block.ycord + 20): #player colliding from up            
-                                player.ycord = block.ycord - 84
+                    for bullet in bullets:
+                        if player == bullet and block.breakable == True:
+                            pygame.sprite.Sprite.kill(block)
+                            pygame.sprite.Sprite.kill(player)
+                        if player == bullet:
+                            pygame.sprite.Sprite.kill(player)
+                    for ball in balls:
+                        if player != ball:
+                            if player.ycord < (block.ycord) and player.ycord > (block.ycord - 70): #left right collisions
+                                if player.xcord < (block.xcord + 40) and player.xcord > (block.xcord + 20): #player colliding from right
+                                    player.xcord = block.xcord + 40
+                                elif player.xcord > (block.xcord - 56) and player.xcord < (block.xcord + 20): #player colliding from left            
+                                    player.xcord = block.xcord - 56
+                            elif player.xcord < (block.xcord + 40) or player.xcord > (block.xcord - 56): #up down collisions
+                                if player.ycord < (block.ycord + 40) and player.ycord > (block.ycord + 20): #player colliding from down
+                                    player.ycord = block.ycord + 40
+                                elif player.ycord > (block.ycord - 84) and player.ycord < (block.ycord + 20): #player colliding from up            
+                                    player.ycord = block.ycord - 84
                     else:
                         if player.ycord < (block.ycord) and player.ycord > (block.ycord - 70): #left right collisions
                             if player.xcord < (block.xcord + 40) and player.xcord > (block.xcord + 20): #player colliding from right
@@ -535,8 +550,25 @@ def maingame(gametype):
                 else:
                     upgrade = Upgrade(random.randrange(3))
 
-        if gametype == "Level" and len(balls) == 0:
+        elif len(balls) == 0 and gametype == "Level":
             run = 0
+        elif len(balls) == 0 and gametype == "Campaign" and level < 9:
+            kill()
+            level += 1
+            gamestart = False
+            floor = Floor()
+            wall = Wall(0)
+            wall = Wall(1275)
+            player.lives = 6
+            playercords = levelreader('Campaign.txt', level)        #Spawned volgende level
+            player = Player(playercords[0][0], playercords[0][1])
+            player2 = Player2(playercords[1][0], playercords[1][1])
+        elif len(balls) == 0 and gametype == "Campaign" and level == 9:
+            run = 0
+
+            
+                
+                
             
             
 

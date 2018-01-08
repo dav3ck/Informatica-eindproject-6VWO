@@ -48,7 +48,7 @@ def choice (windownum):
     elif windownum == 2:
         maingame("Level")
     elif windownum == 3:
-        print("ok")
+        maingame("Campaign")
     elif windownum == 4:
         print("ok")
 
@@ -78,7 +78,7 @@ while True:
     option0 = myfont.render("Arcade", False, color[0])
     option1 = myfont.render("Leveleditor", False, color[1])
     option2 = myfont.render("Levels", False, color[2])
-    option3 = myfont.render("Campaign(not yet implemented)", False, color[3])
+    option3 = myfont.render("Campaign", False, color[3])
     option4 = myfont.render("Controls(not yet implemented)", False, color[4])
 
     screen.blit(option0, (500, 300))

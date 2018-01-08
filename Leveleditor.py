@@ -15,7 +15,6 @@ name = ''
 keyboard = 0
 editor_colum = 1
 
-movingblockcord = 0
 confirm = True
 
 
@@ -81,6 +80,7 @@ class Curser(parent):
         self.blocksize = True
         self.Error = False
         self.playercount = 0
+        self.movingblockcord = 0
 
 
 
@@ -140,7 +140,7 @@ class Popup(parent):
         self.rect.y = self.ycord
         self.rect.x = self.xcord
 
-        txt_popup = font.render(str(popup.confirm), True, red)
+        txt_popup = font.render(str(self.confirm), True, red)
         screen.blit(txt_popup, (510, 550))
             
         
@@ -165,7 +165,7 @@ def writearray(value, row, colum):
                     Level[0][row + x][colum + y] = 'a'
 
     elif value == 6:
-        for x in range(movingblockcord + 2 - colum):
+        for x in range(curser.movingblockcord + 2 - colum):
             if x != 0:
                 Level[0][row][colum + x] = 'b'
 
@@ -175,6 +175,7 @@ def writearray(value, row, colum):
 #Deze functie verwijderd de code
 
 def cleararray(row, colum):
+    x = 1
     value = Level[0][row][colum]
     
     if type(value != float):
@@ -191,6 +192,15 @@ def cleararray(row, colum):
                 for y in range(4):
                     if x != 0 or y != 0:
                         Level[0][row + x][colum + y] = 0
+
+        elif value == 1:
+            Level[0][row + 1][colum] = 0
+
+        elif value == 6:
+            while Level[0][row][colum + x] == "b":
+                Level[0][row][colum + x] = 0
+                x += 1
+            
                     
 #De check functie checked of iets geplaatst kan worden!
 
@@ -210,10 +220,12 @@ def check(value, row, colum):
                     Error = True
     elif value == 1 and curser.playercount == 2:
         Error = True
-            
+    elif value == 6 and (Level[0][row][colum - 1] != 0):
+        Error = True
     else:
         if Level[0][row][colum] != 0:
             Error = True
+        
             
     return Error
     
@@ -227,6 +239,9 @@ def movement():
     elif curser.blockvalue == 9:
         curser.xsize = 160
         curser.ysize = 120
+    elif curser.blockvalue == 1:
+        curser.xsize = 40
+        curser.ysize = 80
     else:
         curser.xsize = 40
         curser.ysize = 40
@@ -236,8 +251,6 @@ def movement():
     elif curser.blockvalue == 6:
         curser.color = white
     elif curser.blockvalue == 1:
-        curser.xsize = 40
-        curser.ysize = 80
         curser.color = green
     else:
         curser.color = yellow
@@ -266,17 +279,21 @@ def keyboardpopup(text):
         for event in pygame.event.get(): #handles closing the window
             if event.type == pygame.QUIT:
                 pygame.quit()
-            elif event.type == pygame.KEYDOWN and curser.Error == False:
+            elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
-                    popup.confirm = False
+                    for popup in popups:
+                        popup.confirm = False
                 elif event.key == pygame.K_RIGHT:
-                    popup.confirm = True
+                    for popup in popups:
+                        popup.confirm = True
                 elif event.key == pygame.K_SPACE:
-                    pygame.sprite.Sprite.kill(popup)
-                    popup.txt = font.render('', True, red)
+                    for popup in popups:
+                        pygame.sprite.Sprite.kill(popup)
+                        popup.txt = font.render('', True, red)
                     keyboardpopupvalue = 0
                     return popup.confirm
         screenmanage(40,40,1280,1024, text)
+
 
 def screenmanage(xlines, ylines, width, height, text):
     everything.update()
@@ -302,7 +319,8 @@ def screenmanage(xlines, ylines, width, height, text):
     screen.blit(txt_popup, (510, 550))
 
     if len(popups) > 0:
-        txt_popup = font.render(str(popup.confirm), True, red)
+        for popup in popups:
+            txt_popup = font.render(str(popup.confirm), True, red)
         screen.blit(txt_popup, (510, 650))
    
     pygame.display.flip()
@@ -335,7 +353,6 @@ def editor():
     keyboard = 0
     editor_colum = 1
 
-    movingblockcord = 0
     confirm = True
     while run == 1:
 
@@ -361,7 +378,7 @@ def editor():
                             if curser.blockvalue == 6:
                                 keyboard = 2
                                 curser.colum -= 1
-                                movingblockcord = curser.colum
+                                curser.movingblockcord = curser.colum
                             else:
                                 writearray(curser.blockvalue, curser.row, curser.colum)
                                 
@@ -369,8 +386,7 @@ def editor():
                         print(curser.colum, curser.row)
                         print(curser.playercount)
                     elif event.key == pygame.K_c:
-                        popup = Popup("Het werkt")
-                        keyboard = 3
+                        print(Level)
                     elif event.key == pygame.K_q:
                         curser.blockvalue += 1
                         print(curser.blockvalue)
@@ -389,6 +405,8 @@ def editor():
                                     for y in range(32):
                                         f.write(str(Level[0][x][y]))
                                     f.write("\n")
+                            run = 0
+                    elif event.key == pygame.K_ESCAPE:
                         run = 0
                                 
                                 
@@ -417,13 +435,13 @@ def editor():
             for event in pygame.event.get(): #handles closing the window
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                elif event.type == pygame.KEYDOWN and curser.Error == False:
-                    if event.key == pygame.K_LEFT:
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_LEFT and curser.Error != True:
                         if curser.colum != 0:
                             block = Block(curser.xsize, curser.ysize, curser.color, curser.row, curser.colum)
                             curser.colum -= 1
                     elif event.key == pygame.K_RIGHT:
-                        if curser.colum < movingblockcord:
+                        if curser.colum < curser.movingblockcord:
                             curser.colum += 1
                             for block in blocks:
                                 if block.colum == curser.colum and block.row == curser.row:
@@ -431,7 +449,7 @@ def editor():
                                     print("hi")
                         else:
                             for block in blocks:
-                                if block.colum == movingblockcord + 1:
+                                if block.colum == curser.movingblockcord + 1:
                                     pygame.sprite.Sprite.kill(block)
                             curser.colum += 1
                             keyboard = 0
@@ -452,13 +470,16 @@ def editor():
         if editor_colum > 10:
             editor_colum = 0
         elif editor_colum < 0:
-            editor_colum = 10
+            editor_colum = 9
 
 
             
                     
         screenmanage(40,40,1280,1024, '')
-        
+        '''if len(popups) > 0:
+            for popup in popups:
+                txt_popup = font.render(str(popup.confirm), True, red)
+            screen.blit(txt_popup, (510, 650))'''
      
                      
     screen.fill(black)

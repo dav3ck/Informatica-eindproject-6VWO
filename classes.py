@@ -342,6 +342,7 @@ class Player(parent):
         self.rect.x = self.xcord
         self.rect.y = self.ycord
 
+
         self.timer += 1
         self.ittnumtimer += 1
         if self.deathtimer > 0:
@@ -762,10 +763,10 @@ class Block1(parent):
         self.rect = self.image.get_rect()
 
 class Ladder(parent):
-    def __init__(self):
+    def __init__(self, x,y):
         super().__init__()
-        self.xcord = 500
-        self.ycord = 800
+        self.xcord = x
+        self.ycord = y
         self.image = pygame.Surface([40,40])
         self.image.fill(black)
         self.rect = self.image.get_rect()
@@ -774,17 +775,15 @@ class Ladder(parent):
         ladders.add(self)
 
 class Block(parent):
-    def __init__(self):
+    def __init__(self, x,y,distance,breakable):
         super().__init__()
-        self.xcord = 500
-        self.ycord = 700
-        self.xspeed = 3
-        self.yspeed = 0
-        self.xleft = 400
-        self.xright = 600
-        self.yup = 100
-        self.ydown = 200
-        self.breakable = False
+        self.xcord = x 
+        self.ycord = y
+        self.xspeed = 1
+        self.xleft = x + distance
+        self.xright = x
+        self.distance = distance
+        self.breakable = breakable
         self.image = pygame.Surface([40,40])
         self.image.fill(black)
         self.rect = self.image.get_rect()
@@ -793,12 +792,11 @@ class Block(parent):
         blocks.add(self)
 
     def update(self):
-        self.xcord += self.xspeed
-        self.ycord += self.yspeed
-        if self.xcord < self.xleft or self.xcord > self.xright:
-            self.xspeed *= -1
-        if self.ycord < self.yup or self.ycord > self.ydown:
-            self.yspeed *= -1
-        self.rect = self.image.get_rect()
-        self.rect.y = self.ycord
-        self.rect.x = self.xcord
+        if self.distance != 0:
+            self.xcord += self.xspeed
+            self.ycord += self.yspeed
+            if self.xcord > self.xleft or self.xcord < self.xright:
+                self.xspeed *= -1
+            self.rect = self.image.get_rect()
+            self.rect.y = self.ycord
+            self.rect.x = self.xcord
