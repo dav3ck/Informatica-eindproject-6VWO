@@ -6,7 +6,54 @@ import random
 pygame.init()
 from classes import * #imports all from classes, removes the need for "classes."prepend
 from Levelreader import *
+'''
+black = (0, 0, 0) #defines the colour black
+white = (255,255,255)
 
+withd = 1280 #Breedte van scherm
+height = 1024 #Hoogte van scherm
+
+pygame.font.init()
+myfont = pygame.font.Font('Sprites/Font/Arcade.ttf', 60)
+myfontsmall = pygame.font.Font("Sprites/Font/Arcade.ttf", 40)
+
+spawntimer = 0
+
+globaltimer = 0
+
+spawninterval = 0
+
+gamestart = False
+
+highscore = Highscore()
+
+highscore2 = Highscore2()
+
+playernum = 1
+
+
+#window setup
+screen = pygame.display.set_mode((1280,1024))#, pygame.FULLSCREEN)
+screen_rect=screen.get_rect()
+pygame.display.set_caption('Sticky Icky beta')
+clock = pygame.time.Clock()
+
+background = pygame.image.load('Sprites/Extra/Background.png').convert()
+
+pygame.mouse.set_visible(0) #Removed mouse
+
+
+#creates play envoirment 
+floor = Floor()
+wall = Wall(0) #left wall
+wall = Wall(1275) #right wall
+
+
+flashart = Flashart("Sprites/Extra/Flash.png", 0, 0)
+
+pygame.mixer.music.load("Theme.wav")
+#pygame.mixer.music.play(loops=-1, start=0.0
+'''
 
 def kill():
     for sprite in everything:
@@ -20,11 +67,11 @@ def maingame(gametype):
     withd = 1280 #Breedte van scherm
     height = 1024 #Hoogte van scherm
 
-    pygame.font.init()                      #This block setsup the font
+    pygame.font.init()
     myfont = pygame.font.Font('Sprites/Font/Arcade.ttf', 60)
     myfontsmall = pygame.font.Font("Sprites/Font/Arcade.ttf", 40)
 
-    screen = pygame.display.set_mode((1280,1024)) #The basics for the screen are setup here
+    screen = pygame.display.set_mode((1280,1024))#, pygame.FULLSCREEN)
     screen_rect=screen.get_rect()
     clock = pygame.time.Clock()
 
@@ -36,18 +83,18 @@ def maingame(gametype):
 
     gamestart = False
 
-    highscore = Highscore()     #List containing all the highscores, used for sorting purposes
+    highscore = Highscore()
     highscores = []
     with open('highscores.txt', 'r') as r:
         for line in sorted(r):
             highscores.insert(0, line)
 
-    highscores2 = []                                #All two player highscores
+    highscores2 = []
     with open('highscores2.txt', 'r') as r:
         for line in sorted(r):
             highscores2.insert(0, line)
 
-    highscore2 = Highscore2() #Creates a higshcore object
+    highscore2 = Highscore2()
     
 
     playernum = 1
@@ -59,14 +106,14 @@ def maingame(gametype):
     wall = Wall(1275) #right wall
     
     
-    if gametype == "arcade": #Loads in an arcade style game
-        player = Player(600,800) #creates the players
+    if gametype == "arcade":
+        player = Player(600,800) #creates the player
         player2 = Player2(600,800)
-    elif gametype == "Level": #Loads in level style gameplay
+    elif gametype == "Level":
         playercords = levelreader('Levels.txt', 0)
         player = Player(playercords[0][0], playercords[0][1])
         player2 = Player2(playercords[1][0], playercords[1][1])
-    elif gametype == "Campaign": #Starts up the campaign
+    elif gametype == "Campaign":
         level = 0
         playercords = levelreader('Campaign.txt', level)
         player = Player(playercords[0][0], playercords[0][1])
@@ -76,11 +123,11 @@ def maingame(gametype):
 
     
     
-    pygame.mixer.music.load("Theme.wav") #Plays the game's main theme
+    pygame.mixer.music.load("Theme.wav")
 
-    background = pygame.image.load('Sprites/Extra/Background.png').convert() #This code is needed to prevent massive lag on slower PC's
-    
-    Grunt = pygame.mixer.Sound("Sounds/Grunt-3.wav")                #This block loads in all the sound effects that are used troughout the game. 
+    background = pygame.image.load('Sprites/Extra/Background.png').convert()
+
+    Grunt = pygame.mixer.Sound("Sounds/Grunt-3.wav")
     Keypress = pygame.mixer.Sound("Sounds/Keyboard-sound.wav")
     Plop = pygame.mixer.Sound("Sounds/Plop-sound.wav")
     Reload = pygame.mixer.Sound("Sounds/Reloading.wav")
@@ -90,9 +137,8 @@ def maingame(gametype):
     Deaththeme = pygame.mixer.Sound("Sounds/Ukulile-G-minor-down.wav")
     
 
-    run = 1 #Its basically a boolean, for smoother quitting out of the game. 
-
-    #Main game loop         
+    run = 1
+             
     while run == 1:
         for event in pygame.event.get(): #handles closing the window
             if event.type == pygame.QUIT:
@@ -108,18 +154,18 @@ def maingame(gametype):
                         player.changespeed(5)
                     elif len(keyboards) == 1:
                         keyboard.num += 1
-                elif event.key == pygame.K_UP: #Move up
+                elif event.key == pygame.K_UP:
                     if player.alive == True:
                         player.changeyspeed(-5)
                     elif len(keyboards) == 1:
                         keyboard.num -= 10
-                elif event.key == pygame.K_DOWN: #Move down
+                elif event.key == pygame.K_DOWN:
                     if player.alive == True:
                         player.changeyspeed(5)
                     elif len(keyboards) == 1:
                         keyboard.num += 10
                 elif event.key == pygame.K_SPACE: #shoot button
-                    if gamestart == False: #Here the press shoot to play is handled
+                    if gamestart == False:
                         for ball in balls:
                             ball.freeze = False
                         gamestart = True
@@ -135,7 +181,7 @@ def maingame(gametype):
                             bullet = Bullet(player2.xcord,player2.ycord)
                             player2.ammo -= 1
                             player2.fire = True
-                elif event.key == pygame.K_RETURN: #This handles keyboard confirmations, in the original game this was handled by spacebar
+                elif event.key == pygame.K_RETURN:
                     if len(keyboards) == 1:
                         Keypress.play()
                         if textbox.ittnum < 5:
@@ -192,19 +238,19 @@ def maingame(gametype):
                             player.lives = 6
                 elif event.key == pygame.K_r: #reload
                     player2.reload()
-                elif event.key == pygame.K_m: #Sets ful screen
+                elif event.key == pygame.K_m:
                     screen = pygame.display.set_mode((1280,1024), pygame.FULLSCREEN)
-                elif event.key == pygame.K_n: #Breaks out of full screen
+                elif event.key == pygame.K_n:
                     screen = pygame.display.set_mode((1280,1024))
                     pygame.mouse.set_visible(1)
-                elif event.key == pygame.K_KP0: #Shooting for player 1
+                elif event.key == pygame.K_KP0:
                     if player.alive == True:
                         if player.ammo > 0 and spawntimer > 0:
                             Shot.play()
                             bullet = Bullet(player.xcord,player.ycord)
                             player.ammo -= 1
                             player.fire = True
-                elif event.key == pygame.K_KP1: #Reloading for player 1
+                elif event.key == pygame.K_KP1:
                     player.reload()
                 elif event.key == pygame.K_a: #move left
                     if player2.alive == True and gamestart == True:
@@ -212,13 +258,13 @@ def maingame(gametype):
                 elif event.key == pygame.K_d: #move right
                     if player2.alive == True and gamestart == True:
                         player2.changespeed(5)
-                elif event.key == pygame.K_w: #Move up
+                elif event.key == pygame.K_w:
                     if player.alive == True:
                         player2.changeyspeed(-5)
-                elif event.key == pygame.K_s: #Move down
+                elif event.key == pygame.K_s:
                     if player2.alive == True:
                         player2.changeyspeed(5)
-                elif event.key == pygame.K_p and gamestart == False: #Changes the number of players
+                elif event.key == pygame.K_p and gamestart == False:
                     if gametype == "Level" or gametype == "arcade":
                         if playernum == 1:
                             playernum = 2
@@ -229,7 +275,8 @@ def maingame(gametype):
                             playernum = 2
                         else:
                             playernum =1
-                elif event.key == pygame.K_BACKSPACE: #Kills the game
+                elif event.key == pygame.K_BACKSPACE:
+                    print("Hello?")
                     run = 0
                     kill()
             elif event.type == pygame.KEYUP: #handles all key releases
@@ -239,7 +286,7 @@ def maingame(gametype):
                 elif event.key == pygame.K_RIGHT: #right key release
                     if player.alive == True and gamestart == True:
                         player.changespeed(-5)
-                elif event.key == pygame.K_UP: 
+                elif event.key == pygame.K_UP:
                     if player.alive == True and gamestart == True:
                         player.changeyspeed(5)
                         player.ymove = False
@@ -267,30 +314,30 @@ def maingame(gametype):
 
         #GUI text
         if playernum == 1:
-            prescore = str(int(player.killcount * 100)) #Calculates the single player scores
+            prescore = str(int(player.killcount * 100))
             zeros = 6 - len(prescore)
             scoredisp = '0' * zeros + prescore
         else:
-            prescore = str(int((player.killcount + player2.killcount)* 100)) #Calculates the multyplayer scores 
+            prescore = str(int((player.killcount + player2.killcount)* 100))
             zeros = 6 - len(prescore)
             scoredisp = '0' * zeros + prescore        
         
-        scoretext = myfont.render(scoredisp, False, black)                          #This block handles all the gui text
+        scoretext = myfont.render(scoredisp, False, black)
         ammotext = myfont.render(str(player.ammo), False, black)
         ammotext2 = myfont.render(str(player2.ammo), False, white)
         lifetext = myfont.render(str(player.lives), False, black)
         playertext = myfontsmall.render("Number of players: " + str(playernum)+ " (press P to change)", False, white)
 
-        #Game logic
+        #Game logica
         spawntimer += 1
 
         globaltimer += 1
 
-        if player.lives <= 0: #Kills the players
+        if player.lives <= 0:
             player.alive = False
             player2.alive = False
 
-        if player.alive == False and player.once == 1: #Statement more complicated than you'd imagine it to be but it prevents bugs, also handles what happnes after the players die. 
+        if player.alive == False and player.once == 1:
             flashart = Flashart("Sprites/Extra/GameOver.png", 414 , 50)
             player.deathtimer = 1
             Deaththeme.play()
@@ -298,7 +345,7 @@ def maingame(gametype):
         if player.alive == False and player.deathtimer > 180 and len(keyboards) == 0 and gametype == "arcade": #Dit load na 3 seconde textbox in
             keyboard = Keyboard()
             textbox = Textbox()
-        elif gametype == "Level" and player.alive == False and player.deathtimer > 180: #This breaks out of the running game once its finished. 
+        elif gametype == "Level" and player.alive == False and player.deathtimer > 180:
             run = 0
         elif gametype == 'Campaign' and player.alive == False and player.deathtimer > 180:
             run = 0
@@ -422,23 +469,24 @@ def maingame(gametype):
         for upgrade in upgrades: #ends the powerups
             upgrade.powerdown(player,ball,balls)
 
-        for upgrade in upgrades: #ends player 2 powerups
+        for upgrade in upgrades:
             upgrade.powerdown(player2,ball,balls)
 
 
-        for ladder in ladders: #handles the collision based mechanics of the ladders, the rest is handled in classes. 
+        for ladder in ladders:
             hits = pygame.sprite.spritecollide(player, ladders, False)
             for ladder in hits:
                 player.ladder = True
                 player.ladderonce = 0
+                
 
-        for ladder in ladders: #ladders for the second player
+        for ladder in ladders:
             hits = pygame.sprite.spritecollide(player2, ladders, False)
             for ladder in hits:
                 player2.ladder = True
                 player2.ladderonce = 0        
 
-        def blockhit(player): #This function is how the blocks work, it is typed with player because the other objects wern't implemented yet. 
+        def blockhit(player):
             for block in blocks:
                 hits = pygame.sprite.spritecollide(player, blocks, False)
                 for block in hits:
@@ -458,36 +506,41 @@ def maingame(gametype):
                             elif player.xcord < (block.xcord + 40) or player.xcord > (block.xcord - 56): #up down collisions
                                 if player.ycord < (block.ycord + 40) and player.ycord > (block.ycord + 20): #player colliding from down
                                     player.ycord = block.ycord + 40
-                                elif player.ycord > (block.ycord - 84) and player.ycord < (block.ycord + 20): #player colliding from up            
+                                if player.ycord > (block.ycord - 84) and player.ycord < (block.ycord + 20): #player colliding from up            
                                     player.ycord = block.ycord - 84
-                    else:
-                        if player.ycord < (block.ycord) and player.ycord > (block.ycord - 70): #left right collisions
-                            if player.xcord < (block.xcord + 40) and player.xcord > (block.xcord + 20): #player colliding from right
-                                player.xspeed *= -1
-                            elif player.xcord > (block.xcord - 56) and player.xcord < (block.xcord + 20): #player colliding from left            
-                                player.xspeed *= -1
-                        elif player.xcord < (block.xcord + 40) or player.xcord > (block.xcord - 56): #up down collisions
-                            if player.ycord < (block.ycord + 40) and player.ycord > (block.ycord + 20): #player colliding from down
-                                player.ycord = block.ycord + 40
-                            elif player.ycord > (block.ycord - 84) and player.ycord < (block.ycord + 20): #player colliding from up            
-                                player.ycord = block.ycord - 84
-                                if player == ball:
-                                    if ball.typenum == 0:
-                                        ball.yspeed = 0
-                                        ball.xspeed /= 10000
-                                        ball.weight /= 10000
-                                        ball.typenum = 1
-                                        ball.ittnum = -1
+                        else:
+                            if player.ycord < (block.ycord) and player.ycord > (block.ycord - 70): #left right collisions
+                                if player.xcord < (block.xcord + 42) and player.xcord > (block.xcord + 20): #player colliding from right
+                                    player.xspeed *= -1
+                                elif player.xcord > (block.xcord - 56) and player.xcord < (block.xcord + 20): #player colliding from left            
+                                    player.xspeed *= -1
+                            elif player.xcord < (block.xcord + 40) or player.xcord > (block.xcord - 56): #up down collisions
+                                if player.ycord < (block.ycord + 40) and player.ycord > (block.ycord + 20): #player colliding from down
+                                    player.ycord = block.ycord + 42
+                                elif player.ycord > (block.ycord - 84) and player.ycord < (block.ycord + 20): #player colliding from up            
+                                    player.ycord = block.ycord - 86
+                                    if player == ball:
+                                        if ball.typenum == 0:
+                                            ball.yspeed = 0
+                                            ball.xspeed /= 10000
+                                            ball.weight /= 10000
+                                            ball.typenum = 1
+                                            ball.ittnum = -1
 
-        blockhit(player) #Here the previously mentioned blockhit function is called uppon for all the objects in the game
+        
+        
+        blockhit(player)
         blockhit(player2)
+
+
+
         for ball in balls:
             blockhit(ball)
         for bullet in bullets:
             blockhit(bullet)
 
         #spawning
-        if gametype == "arcade": #does the calulations for slime spawning
+        if gametype == "arcade":
             if globaltimer < 3600:
                 spawninterval = int(-1 / 14400 * math.pow(globaltimer, 2) + 1800)
             else:
@@ -497,15 +550,15 @@ def maingame(gametype):
                 ball = Ball(1,500,70,False)
                 spawntimer = 0
 
-            if globaltimer % 900 == 0: #Spawns the upgrades
+            if globaltimer % 900 == 0: 
                 if globaltimer % 2700 == 0:
                     upgrade = Upgrade(random.randrange(3,6))
                 else:
                     upgrade = Upgrade(random.randrange(3))
 
-        elif len(balls) == 0 and gametype == "Level":   #Ends the level once all balls are gone. 
+        elif len(balls) == 0 and gametype == "Level":
             run = 0
-        elif len(balls) == 0 and gametype == "Campaign" and level < 9: #Continues to the next level once all balls are gone
+        elif len(balls) == 0 and gametype == "Campaign" and level < 9:
             kill()
             level += 1
             gamestart = False
@@ -516,7 +569,7 @@ def maingame(gametype):
             playercords = levelreader('Campaign.txt', level)        #Spawned volgende level
             player = Player(playercords[0][0], playercords[0][1])
             player2 = Player2(playercords[1][0], playercords[1][1])
-        elif len(balls) == 0 and gametype == "Campaign" and level == 9: #Quits the campaign once you finished the final level
+        elif len(balls) == 0 and gametype == "Campaign" and level == 9:
             run = 0
 
             
@@ -525,45 +578,44 @@ def maingame(gametype):
             
             
 
-        everything.update() #causes all the objects actions to happen 
+        everything.update()
         
         #Screen management
 
-        if player.xcord > (withd - 50): #Makes sure the player can't move outside of the game screen
+        if player.xcord > (withd - 50):
             player.xcord = (withd - 50)
         elif player.xcord < 0:
             player.xcord = 0
 
-        if player2.xcord > (withd - 50): #Ensures the same thing for the second player player
+        if player2.xcord > (withd - 50):
             player2.xcord = (withd - 50)
         elif player2.xcord < 0:
             player2.xcord = 0
             
-        screen.blit(background,(0,0)) #prints the background
+        screen.blit(background,(0,0))
         
-        everything.draw(screen) #places all the objects in their new positions
+        everything.draw(screen)
 
         #Display tekst    
 
-        screen.blit(scoretext,(880,950)) #this block blits all the gui text onscreen
+        screen.blit(scoretext,(880,950))
         screen.blit(ammotext, (380, 950))
         screen.blit(lifetext, (205, 950))
-        
-        if gamestart == False:                  #blits the gui texts that are onscreen once the game has not started 
+        if gamestart == False:
             screen.blit(playertext, (10, 10))
         if playernum == 2:
             screen.blit(ammotext2, (500, 950))
         
-        if player.alive == False and player.once > 2: #Prevents things from spawning if the game is not playing
+        if player.alive == False and player.once > 2:
             globaltimer = 0
             spawntimer = 0    
-        if gamestart == False and playernum == 1: #Prints the singleplayer scoreboard
+        if gamestart == False and playernum == 1:
             globaltimer = 0
             spawntimer = 0
             for i in range(10):
                 screen.blit(myfontsmall.render(str(i + 1) + ". " + str(highscores[i]).replace("\n",""), False, black), (highscore.xcord, highscore.tempy))
                 highscore.tempy += 40
-        elif gamestart == False and playernum == 2: #Prints the multiplayer scoreboard
+        elif gamestart == False and playernum == 2:
             globaltimer = 0
             spawntimer = 0
             for i in range(10):

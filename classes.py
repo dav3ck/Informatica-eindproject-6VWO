@@ -4,6 +4,8 @@ import random
 #colour variables
 black = (0, 0, 0)
 white = (255, 255, 255)
+red = (255,0,0)
+green = (0,255,255)
 
 #lists
 bullets = pygame.sprite.Group() #list that will hold all the bullets
@@ -246,6 +248,7 @@ class Player(parent):
         self.yspeed = 3
         self.ymove = False
         self.ladderonce = 0
+        self.fallreducer = 1
 
     def changespeed(self,x):
         self.xspeed += x
@@ -312,11 +315,12 @@ class Player(parent):
             self.ittnum = 0
 
         self.rect = self.image.get_rect()
+        self.rect.inflate_ip(-50,0)
 
         self.xcord += (self.xspeed * (self.reducer * self.reducerup)) #basic player movement
 
 
-        self.ycord += self.yspeed
+        self.ycord += self.yspeed * self.fallreducer
 
             
         if self.ycord > 752:
@@ -347,6 +351,8 @@ class Player(parent):
         self.ittnumtimer += 1
         if self.deathtimer > 0:
             self.deathtimer += 1
+
+        self.fallreducer = 1
             
 
 class Player2(parent):
@@ -446,6 +452,9 @@ class Player2(parent):
             self.ittnum = 0
 
         self.rect = self.image.get_rect()
+        self.rect.inflate_ip(-50,0)
+
+        
 
         self.xcord += (self.xspeed * (self.reducer * self.reducerup)) #basic player movement
 
@@ -763,19 +772,20 @@ class Block1(parent):
         self.rect = self.image.get_rect()
 
 class Ladder(parent):
-    def __init__(self, x,y):
+    def __init__(self, x,y, sprite):
         super().__init__()
         self.xcord = x
         self.ycord = y
-        self.image = pygame.Surface([40,40])
-        self.image.fill(black)
+        self.image = pygame.image.load(sprite)
         self.rect = self.image.get_rect()
         self.rect.y = self.ycord
         self.rect.x = self.xcord
         ladders.add(self)
+        #self.rect.inflate(0,4)
+        #pygame.draw.rect(self.image,red,self.rect)
 
 class Block(parent):
-    def __init__(self, x,y,distance,breakable):
+    def __init__(self, x,y,distance,breakable,sprite):
         super().__init__()
         self.xcord = x 
         self.ycord = y
@@ -784,12 +794,14 @@ class Block(parent):
         self.xright = x
         self.distance = distance
         self.breakable = breakable
-        self.image = pygame.Surface([40,40])
-        self.image.fill(black)
+        self.image = pygame.image.load(sprite)
         self.rect = self.image.get_rect()
         self.rect.y = self.ycord
         self.rect.x = self.xcord
+        self.rect.inflate(4,0)
         blocks.add(self)
+
+        
 
     def update(self):
         if self.distance != 0:
@@ -798,5 +810,10 @@ class Block(parent):
             if self.xcord > self.xleft or self.xcord < self.xright:
                 self.xspeed *= -1
             self.rect = self.image.get_rect()
+            #self.rect.inflate_ip(0,4)
             self.rect.y = self.ycord
             self.rect.x = self.xcord
+
+
+    
+        

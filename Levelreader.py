@@ -97,7 +97,7 @@ def spawnlevel(Level, linenumber, blockvalue, lines):
                     movingblockcounter += 1
                     
                 x = x - movingblockcounter
-                block = Block(x * 40,y * 40, movingblockcounter * 40, False)
+                block = Block(x * 40,y * 40, movingblockcounter * 40, False, "Sprites/Blocks/Block1.png")
                 movingblockcounter = 0
             else:     
                 blockvalue = value[x]
@@ -112,21 +112,17 @@ def spawnitems(y,x, typ):
         if len(players) < 1:
             playercords[0][0] = x
             playercords[0][1] = y
-            #player = Player(x,y)
-            #print("done")
         else:
             playercords[1][0] = x
             playercords[1][1] = y
-            #player2 = Player2(x,y)
-            #print("k")
     elif typ == '2':#ladder
-        ladder = Ladder(x,y)   #ladder
+        ladder = Ladder(x,y, "Sprites/Blocks/Block3.png" )   #ladder
     elif typ == '3':                                                            #Static platform
-        block = Block(x,y,0,False)
+        block = Block(x,y,0,False, "Sprites/Blocks/Block1.png")
     elif typ == '4':                                                            #Breakable platform
-        block = Block(x,y,0,False)    #Wall                                          
+        block = Block(x,y,0,False, "Sprites/Blocks/Block0.png")    #Wall                                          
     elif typ == '5':                                                            #vertical wall
-        block = Block(x,y,0,True) #Breakable                                           
+        block = Block(x,y,0,True, "Sprites/Blocks/Block2.png") #Breakable                                           
     elif typ == '7':                                                            #small slime
         ball = Ball(4,x,y, True)
     elif typ == '8':                                                            #medium slime
@@ -146,6 +142,7 @@ def levelreader(file, level):
     
     blockvalue = 0
     levelname = True
+    
 
     if file == "Campaign.txt":
         spawnlevel(Level, level, blockvalue, lines)

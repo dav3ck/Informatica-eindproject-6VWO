@@ -4,10 +4,12 @@ import random
 pygame.init()
 from main import * #imports all from classes, removes the need for "classes."prepend
 from Leveleditor import *
+from Settings import *
 
 black = (0, 0, 0) #defines the colour black
 white = (255,255,255)
 red = (255, 0, 0)
+darkred = (139, 0,0) 
 
 color = [white,white,white,white,white]
 
@@ -50,7 +52,7 @@ def choice (windownum):
     elif windownum == 3:
         maingame("Campaign")
     elif windownum == 4:
-        print("ok")
+        settings()
 
 while True:
     for event in pygame.event.get(): #handles closing the window
@@ -79,7 +81,7 @@ while True:
     option1 = myfont.render("Leveleditor", False, color[1])
     option2 = myfont.render("Levels", False, color[2])
     option3 = myfont.render("Campaign", False, color[3])
-    option4 = myfont.render("Controls(not yet implemented)", False, color[4])
+    option4 = myfont.render("Controls", False, color[4])
 
     screen.blit(option0, (500, 300))
     screen.blit(option1, (500, 400))
