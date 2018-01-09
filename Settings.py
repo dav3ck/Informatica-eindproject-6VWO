@@ -1,14 +1,19 @@
 import pygame
 
+#Dit script laat het plaatje in waar de controlls weergegeven staan
+
 screen = pygame.display.set_mode((1280,1024))#, pygame.FULLSCREEN)
 screen_rect=screen.get_rect()
 pygame.display.set_caption('Sticky Icky beta')
 clock = pygame.time.Clock()
 
-background = pygame.image.load('Sprites/Extra/layout.png').convert()
+#slaat het control plaatje op in de variable backgorund, plaatje is layout.png. Convert functie helpt bij het inladen van plaatje
+background = pygame.image.load('Sprites/Extra/layout.png').convert() 
 
 pygame.mouse.set_visible(0) #Removed mouse
-black = (0,0,0)
+black = (0,0,0) #kleur zwart
+
+#Dit script doet niet veel behalven het plaatje laten zien, daarom heeft het maar 1 knop, wat terug is. met gebruik van de return functie
 
 def settings():
     while True:
@@ -21,7 +26,7 @@ def settings():
                     
 
         screen.fill(black)
-        screen.blit(background,(250,300))
+        screen.blit(background,(250,300)) #print het plaatje
 
         pygame.display.flip()
 
