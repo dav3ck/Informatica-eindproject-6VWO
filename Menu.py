@@ -24,7 +24,7 @@ myfontsmall = pygame.font.Font("Sprites/Font/Arcade.ttf", 40)
 
 
 #window setup, zit is normale Screen setup
-screen = pygame.display.set_mode((1280,1024))#, pygame.FULLSCREEN)
+screen = pygame.display.set_mode((1280,1024), pygame.FULLSCREEN)
 screen_rect=screen.get_rect()
 pygame.display.set_caption('Sticky Icky beta')
 clock = pygame.time.Clock()

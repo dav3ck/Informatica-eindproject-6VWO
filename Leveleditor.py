@@ -341,7 +341,7 @@ def editor_value(editor_colum): #omzettings functie van curser.blockvalue naar e
     else:
         curser.blockvalue = 1
 
-def keyboardpopup(text, editor_colum): #Dit is de functie die helpt bij de popup.
+def keyboardpopup(text, editor_colum, name): #Dit is de functie die helpt bij de popup.
     confirm = False
     keyboardpopupvalue = 1
     for popup in popups:
@@ -362,12 +362,12 @@ def keyboardpopup(text, editor_colum): #Dit is de functie die helpt bij de popup
                         pygame.sprite.Sprite.kill(popup)
                     keyboardpopupvalue = 0
                     return popup.confirm
-        screenmanage(40,40,1280,1024, editor_colum) #roept screen management functie aan
+        screenmanage(40,40,1280,1024, editor_colum, name) #roept screen management functie aan
 
 
 #Deze functie print alle benodigde informatie en dingen op het scherm.
 
-def screenmanage(xlines, ylines, width, height, editor_colum):
+def screenmanage(xlines, ylines, width, height, editor_colum, name):
     everything.update() #met de everything.update() functie worden alle updates die bij de classes stonden uitgevoerd die in de groep everything zitten (dus met andere woorden alles)
     editor1 = pygame.image.load('Sprites/Extra/Editor.png') #Plaatje
 
@@ -396,7 +396,8 @@ def screenmanage(xlines, ylines, width, height, editor_colum):
     screen.blit(txt_surface, (128, 912))
     info = fontsmall.render("Press 'E' to open select menu  //  Press 'ENTER' to select object // Press 'SPACE' to place object //  Press 'R' to remove object // Press 'S' to Save & Quit ", True, black)
     screen.blit(info, (116, 974)) #Dit zijn de instructies die onder het naam hokje worden geplaats, maar dan in een kleiner lettertype
-        
+
+    
     if len(popups) > 0: #Dit gebeurd alleen als er dus minimaal een popup object is -> met andere woorden als er één popup is. Dan word de False or true dus geblit, en de vraag of je klaar bent word geblit.
         for popup in popups:
             txt_text = font.render(str(popup.text), True, red)
@@ -420,6 +421,7 @@ curser = Curser() #hier word de curser eenmalig aangemaakt
 
 def editor():
 
+        
     font = pygame.font.Font(None, 32)
     fontsmall = pygame.font.Font(None, 20)
     editor1 = pygame.image.load('Sprites/Extra/Editor.png')
@@ -435,6 +437,10 @@ def editor():
     name = '' #legen naam
     keyboard = 0 #welk keyboard er gebruikt moet worden -> welke toetsen beschikbaarzijn
     editor_colum = 1
+
+    curser.playercount = 0
+    
+    
 
     confirm = True
     while run == 1: #gameloop
@@ -482,7 +488,7 @@ def editor():
                         cleararray(curser.row, curser.colum)
                     elif event.key == pygame.K_s: #Save key
                         popup = Popup() #popup class word aangemaakt
-                        if keyboardpopup("Weet je zeker dat je klaar bent?", editor_colum) == True: #als uit de keyboardpopup functie True komt, kan je doorgaan. anders niet
+                        if keyboardpopup("Weet je zeker dat je klaar bent?", editor_colum, name) == True: #als uit de keyboardpopup functie True komt, kan je doorgaan. anders niet
                             with open('Levels.txt', 'a') as f: #Level word hier opgeslagen in een .txt bestand.
                                 f.write(name + "\n")
                                 for x in range(21):
@@ -492,7 +498,7 @@ def editor():
                             run = 0 #Run word naar 0 gezet dus while loop stopt
                     elif event.key == pygame.K_ESCAPE: #Escape key om altijd terug te gaan.
                         popup = Popup() #popup class word aangemaakt
-                        if keyboardpopup("weg, zonder save?", editor_colum) == True: #als uit de keyboardpopup functie True komt, kan je doorgaan. anders niet
+                        if keyboardpopup("weg, zonder save?", editor_colum, name) == True: #als uit de keyboardpopup functie True komt, kan je doorgaan. anders niet
                             run = 0
                                 
                                 
@@ -553,16 +559,13 @@ def editor():
 
 
 
-        screenmanage(xlines, ylines, width, height, editor_colum) #Screenmanige function
+        screenmanage(xlines, ylines, width, height, editor_colum, name) #Screenmanige function
 
             
-        
-        
-
+    
      
                      
     screen.fill(black) #als je uit de While loop bent, word het scherm nog eenkeer helemaal zwart gemaakt
-    pygame.display.flip()
     return #ga terug naar hoofdmenu
 
 
